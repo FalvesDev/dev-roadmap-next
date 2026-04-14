@@ -3,6 +3,7 @@ import { StickyProgress } from "@/components/StickyProgress";
 import { ProgressStats } from "@/components/ProgressStats";
 import { ProgressCharts } from "@/components/ProgressCharts";
 import { ModuleSection } from "@/components/ModuleSection";
+import { ArchitectureSection } from "@/components/ArchitectureSection";
 import { ArticlesSection } from "@/components/ArticlesSection";
 import { ResourceGrid } from "@/components/ResourceGrid";
 import { CareerSection } from "@/components/CareerSection";
@@ -70,6 +71,10 @@ export default function Home() {
         {/* ── MODULES (main content) ── */}
         <Divider label="Módulos de aprendizado" />
         <ModuleSection />
+
+        {/* ── ARCHITECTURE ── */}
+        <Divider label="Arquitetura, redes & lógica" />
+        <ArchitectureSection />
 
         {/* ── MATERIALS ── */}
         <Divider label="Materiais de estudo" />
