@@ -240,10 +240,21 @@ export function ArchitectureSection() {
     <section id="arquitetura" className="mb-16">
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-[#ececf0] mb-1">Arquitetura & Fundamentos</h2>
-        <p className="text-sm text-[#9090a0] leading-relaxed max-w-2xl">
+        <p className="text-sm text-[#9090a0] leading-relaxed max-w-2xl mb-4">
           O que a maioria dos cursos não ensina mas toda empresa espera que você saiba.
           Internet, redes, sistemas, bancos de dados e como treinar lógica de verdade.
         </p>
+        {/* Âncora temporal para iniciantes */}
+        <div className="flex items-start gap-3 bg-[#1a1a10] border border-[#2e2e18] rounded-lg px-4 py-3 max-w-2xl">
+          <span className="text-base flex-shrink-0">💡</span>
+          <div>
+            <p className="text-xs font-semibold text-[#d4c870] mb-0.5">Esta seção é referência — não precisa ler tudo agora</p>
+            <p className="text-xs text-[#a0a070] leading-relaxed">
+              Iniciantes: leia <strong className="text-[#d4c870]">Como a Internet Funciona</strong> e <strong className="text-[#d4c870]">Treino de Lógica</strong> agora.
+              Volte às seções de Arquitetura de Software, Banco de Dados e Infra quando chegar às <strong className="text-[#d4c870]">Fases 3–5</strong>.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-6">

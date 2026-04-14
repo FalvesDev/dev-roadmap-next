@@ -10,6 +10,8 @@ import { CareerSection } from "@/components/CareerSection";
 import { TipsSection } from "@/components/TipsSection";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { SearchTrigger } from "@/components/SearchTrigger";
+import { MobileNav } from "@/components/MobileNav";
+import { HeroCTA } from "@/components/HeroCTA";
 
 function Divider({ label }: { label: string }) {
   return (
@@ -27,6 +29,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-[#0d0d12]">
       <Sidebar />
+      <MobileNav />
       <StickyProgress />
       <GlobalSearch />
 
@@ -36,22 +39,26 @@ export default function Home() {
         <section id="overview" className="border border-[#222230] rounded-2xl p-8 md:p-10 mb-10 bg-[#13131a] animate-fade-in-up" style={{ boxShadow: "0 4px 32px rgba(109,94,245,0.06), 0 1px 0 #2a2a38 inset" }}>
           <div className="flex flex-col md:flex-row md:items-start gap-8">
             <div className="flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#505060] mb-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#909098] mb-4">
                 Roadmap 2025 · Python & TypeScript
               </p>
               <h1 className="text-2xl md:text-3xl font-bold text-[#ededf4] mb-3 leading-tight tracking-tight">
                 Do zero ao dev júnior<br />
                 <span className="text-[#7c6af7]">em 9 meses.</span>
               </h1>
-              <p className="text-sm text-[#8080 90] max-w-md leading-relaxed mb-6 text-[#80809a]">
-                Módulos semana a semana, checklist com explicações completas, plano de estudos e
-                50+ recursos curados. Tudo que precisa, na ordem certa.
+              <p className="text-sm text-[#a0a0b0] max-w-md leading-relaxed mb-5">
+                Módulos semana a semana, checklist interativo com explicações completas,
+                110+ recursos curados e trilha de carreira. Tudo que precisa, na ordem certa.
               </p>
+
+              {/* ── CTA "por onde começar" ── */}
+              <HeroCTA />
+
               <div className="flex flex-wrap gap-2">
                 {["Python", "TypeScript", "FastAPI", "React", "Docker", "PostgreSQL"].map((tag) => (
                   <span
                     key={tag}
-                    className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#252535] bg-[#1a1a24] text-[#808098]"
+                    className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#252535] bg-[#1a1a24] text-[#909098]"
                   >
                     {tag}
                   </span>
@@ -64,13 +71,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── PROGRESS ── */}
-        <ProgressStats />
-        <ProgressCharts />
-
-        {/* ── MODULES (main content) ── */}
+        {/* ── MODULES (main content) — antes do progresso para o iniciante ver o roadmap primeiro ── */}
         <Divider label="Módulos de aprendizado" />
         <ModuleSection />
+
+        {/* ── PROGRESS — depois dos módulos, assim o progresso tem contexto ── */}
+        <Divider label="Seu progresso" />
+        <ProgressStats />
+        <ProgressCharts />
 
         {/* ── ARCHITECTURE ── */}
         <Divider label="Arquitetura, redes & lógica" />
