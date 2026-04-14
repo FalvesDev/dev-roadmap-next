@@ -4,34 +4,36 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, BarChart2, BookOpen,
   Newspaper, Link2, TrendingUp, Lightbulb,
+  Layers, Zap,
 } from "lucide-react";
 
 const navSections = [
   {
     label: "Início",
     items: [
-      { href: "#overview",  label: "Visão geral",    icon: LayoutDashboard },
-      { href: "#progresso", label: "Progresso",      icon: BarChart2 },
+      { href: "#overview",     label: "Visão geral",    icon: LayoutDashboard },
+      { href: "#progresso",    label: "Progresso",      icon: BarChart2 },
     ],
   },
   {
     label: "Aprender",
     items: [
-      { href: "#checklist", label: "Módulos",        icon: BookOpen },
+      { href: "#checklist",    label: "Módulos",            icon: BookOpen },
+      { href: "#arquitetura",  label: "Arquitetura & Redes", icon: Layers },
     ],
   },
   {
     label: "Materiais",
     items: [
-      { href: "#artigos",   label: "Artigos & Vídeos", icon: Newspaper },
-      { href: "#recursos",  label: "Links curados",    icon: Link2 },
+      { href: "#artigos",      label: "Artigos & Vídeos", icon: Newspaper },
+      { href: "#recursos",     label: "Links curados",    icon: Link2 },
     ],
   },
   {
     label: "Carreira",
     items: [
-      { href: "#mercado",   label: "Mercado de trabalho", icon: TrendingUp },
-      { href: "#dicas",     label: "Dicas",               icon: Lightbulb },
+      { href: "#mercado",      label: "Mercado de trabalho", icon: TrendingUp },
+      { href: "#dicas",        label: "Dicas & Referência",  icon: Lightbulb },
     ],
   },
 ];
