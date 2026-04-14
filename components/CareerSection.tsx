@@ -201,6 +201,9 @@ export function CareerSection() {
           </div>
         </Card>
 
+        {/* Readiness checklist */}
+        <ReadinessCard />
+
         {/* LinkedIn section */}
         <LinkedInSection />
 
@@ -404,6 +407,138 @@ function LinkedInSection() {
         </div>
       </Card>
 
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   Readiness — quando candidatar
+───────────────────────────────────────────────────────── */
+
+const readinessItems = [
+  {
+    phase: "Fase 1–2",
+    label: "Fundamentos sólidos de Python",
+    desc: "Variáveis, funções, listas, dicionários, OOP básico, leitura de erros.",
+    color: "#6d5ef5",
+    mustHave: true,
+  },
+  {
+    phase: "Fase 2",
+    label: "1 projeto Python funcionando",
+    desc: "CLI, script útil ou automação. Não precisa ser perfeito — precisa rodar e estar no GitHub.",
+    color: "#6d5ef5",
+    mustHave: true,
+  },
+  {
+    phase: "Fase 3",
+    label: "Git + GitHub no dia a dia",
+    desc: "commit, push, pull, branch, PR — rotina de versionamento básica estabelecida.",
+    color: "#3b82f6",
+    mustHave: true,
+  },
+  {
+    phase: "Fase 3",
+    label: "Noções de SQL",
+    desc: "SELECT, INSERT, UPDATE, DELETE, JOIN simples. Saber criar uma tabela.",
+    color: "#3b82f6",
+    mustHave: true,
+  },
+  {
+    phase: "Fase 4",
+    label: "API REST simples com FastAPI",
+    desc: "CRUD básico, endpoints documentados com Swagger, autenticação básica.",
+    color: "#10b981",
+    mustHave: false,
+  },
+  {
+    phase: "Fase 4",
+    label: "TypeScript/React iniciante",
+    desc: "Montar uma tela simples consumindo uma API. useState, useEffect, fetch.",
+    color: "#10b981",
+    mustHave: false,
+  },
+  {
+    phase: "Fase 5",
+    label: "Deploy funcionando",
+    desc: "Qualquer projeto rodando em URL pública — Vercel, Railway ou Render.",
+    color: "#f59e0b",
+    mustHave: false,
+  },
+  {
+    phase: "Sempre",
+    label: "LinkedIn com projetos linkados",
+    desc: "Foto, bio, skills, link pro GitHub, projeto fixado no perfil.",
+    color: "#8b5cf6",
+    mustHave: true,
+  },
+];
+
+function ReadinessCard() {
+  const must = readinessItems.filter((i) => i.mustHave);
+  const nice = readinessItems.filter((i) => !i.mustHave);
+
+  return (
+    <div className="bg-[#16161e] border border-[#222228] rounded-xl p-5">
+      <div className="flex items-center gap-2.5 mb-2">
+        <UserCheck size={14} color="#10b981" strokeWidth={1.5} />
+        <h3 className="text-sm font-semibold text-[#dcdce4]">Quando você está pronto para se candidatar</h3>
+      </div>
+      <p className="text-xs text-[#909098] mb-5 leading-relaxed">
+        Não existe momento perfeito. Mas há um mínimo viável. Os itens <strong className="text-[#10b981]">obrigatórios</strong> são
+        para estágio/trainee; os <strong className="text-[#f59e0b]">opcionais</strong> te colocam no nível júnior.
+      </p>
+
+      <div className="mb-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#10b981] mb-3">
+          Mínimo para estágio / trainee
+        </p>
+        <div className="space-y-2.5">
+          {must.map((item) => (
+            <div key={item.label} className="flex items-start gap-3">
+              <span
+                className="text-[9px] font-semibold px-2 py-0.5 rounded flex-shrink-0 mt-0.5 whitespace-nowrap"
+                style={{ background: `${item.color}18`, color: item.color, border: `1px solid ${item.color}30` }}
+              >
+                {item.phase}
+              </span>
+              <div>
+                <p className="text-xs font-semibold text-[#c8c8d4]">{item.label}</p>
+                <p className="text-[11px] text-[#909098] leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-[#1e1e28] pt-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#f59e0b] mb-3">
+          Adicional para júnior
+        </p>
+        <div className="space-y-2.5">
+          {nice.map((item) => (
+            <div key={item.label} className="flex items-start gap-3">
+              <span
+                className="text-[9px] font-semibold px-2 py-0.5 rounded flex-shrink-0 mt-0.5 whitespace-nowrap"
+                style={{ background: `${item.color}18`, color: item.color, border: `1px solid ${item.color}30` }}
+              >
+                {item.phase}
+              </span>
+              <div>
+                <p className="text-xs font-semibold text-[#c8c8d4]">{item.label}</p>
+                <p className="text-[11px] text-[#909098] leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-5 border-t border-[#1e1e28] pt-4">
+        <p className="text-xs text-[#909098] leading-relaxed">
+          <strong className="text-[#d0d0d8]">Regra prática:</strong> se você completou a Fase 2 e tem algo no GitHub, já pode começar a
+          mandar currículos para estágio. Não espere estar "pronto" — aprende-se muito no processo seletivo.
+        </p>
+      </div>
     </div>
   );
 }
