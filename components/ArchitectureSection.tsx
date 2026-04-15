@@ -1,6 +1,6 @@
 import {
   Globe, Wifi, Server, Database, Layers, GitBranch,
-  Zap, Shield, Box, ArrowRight, type LucideIcon,
+  Zap, Shield, Box, ArrowRight, Cpu, type LucideIcon,
 } from "lucide-react";
 
 interface Topic {
@@ -185,6 +185,51 @@ const groups: TopicGroup[] = [
         what: "Logs: eventos textuais. Métricas: valores numéricos ao longo do tempo. Traces: rastreio de uma requisição entre serviços.",
         why: "Sem observabilidade, você não sabe o que está quebrando em produção. Essencial para qualquer app sério.",
         tags: ["Structured Logs", "Prometheus", "Grafana", "OpenTelemetry", "Sentry", "Datadog"],
+      },
+    ],
+  },
+  {
+    id: "computadores",
+    icon: Cpu,
+    color: "#ec4899",
+    title: "Arquitetura de Computadores",
+    subtitle: "Como o hardware funciona e como isso impacta o software que você escreve.",
+    topics: [
+      {
+        title: "CPU — Como o processador executa código",
+        what: "A CPU busca instrução na memória (fetch), decodifica (decode) e executa (execute). Ciclo de clock determina quantas instruções por segundo. Superscalar: executa múltiplas instruções em paralelo.",
+        why: "Entender CPU cache, branch prediction e pipeline explica por que loops em ordem de memória são 10x mais rápidos que aleatórios.",
+        tags: ["Clock", "Pipeline", "Cache L1/L2/L3", "Branch Prediction", "Cores", "Hyper-threading"],
+      },
+      {
+        title: "Memória — Stack, Heap e além",
+        what: "Stack: alocação automática LIFO para variáveis locais/chamadas de função. Heap: alocação dinâmica manual ou por GC. Cache da CPU: hierarquia L1→L2→L3→RAM→Disco.",
+        why: "Stack overflow, memory leaks e performance de cache são problemas reais do dia a dia. Entender memória te diferencia.",
+        tags: ["Stack Frame", "Heap Allocation", "GC", "malloc", "Locality of Reference", "DRAM"],
+      },
+      {
+        title: "Processos vs Threads",
+        what: "Processo: programa isolado com seu próprio espaço de memória. Thread: unidade de execução dentro de um processo, compartilhando memória. Context switch tem custo.",
+        why: "Python GIL, Node.js event loop, asyncio e multiprocessing fazem sentido quando você entende a diferença entre processo e thread.",
+        tags: ["PID", "Context Switch", "Concorrência", "Paralelismo", "GIL", "Thread Pool"],
+      },
+      {
+        title: "Sistema Operacional — O intermediário",
+        what: "O SO gerencia hardware para programas via syscalls. Abstrai CPU (scheduling), memória (virtual memory, paging), disco (filesystem) e rede (socket API).",
+        why: "Todo código que você escreve passa pelo SO. Entender syscalls, signals e o kernel te ajuda a debugar problemas profundos.",
+        tags: ["Kernel", "Syscall", "Scheduler", "Virtual Memory", "Page Fault", "File Descriptor"],
+      },
+      {
+        title: "I/O — Disk, Network e Blocking",
+        what: "I/O síncrono (blocking): programa pausa esperando. Assíncrono: programa continua e recebe callback/evento. I/O é ordens de magnitude mais lento que CPU.",
+        why: "Por que Node.js e asyncio existem: I/O-bound apps travavam threads esperando disco/rede. Entender isso é base de performance.",
+        tags: ["Blocking I/O", "Non-blocking", "epoll/kqueue", "Event Loop", "Buffer", "Zero-copy"],
+      },
+      {
+        title: "Números que todo dev deve saber",
+        what: "L1 cache: ~1ns. RAM: ~100ns. SSD: ~100μs. HDD: ~10ms. Rede local: ~1ms. Internet (Brasil→EUA): ~150ms. Esses números definem arquitetura.",
+        why: "Saber esses tempos explica por que cache existe, por que async I/O importa e onde gastar esforço de otimização.",
+        tags: ["Latência", "Cache Hit", "Bandwidth", "Throughput", "Latency Numbers", "ns/μs/ms"],
       },
     ],
   },
