@@ -43,37 +43,39 @@ import { LocaleToggle, useI18n } from "@/components/I18nProvider";
 import {
   Brain, Share2, PenLine, Timer, DatabaseBackup,
   GraduationCap, CalendarDays, Award, HelpCircle, Keyboard,
-  Flame, Target, Map,
+  Flame, Target,
 } from "lucide-react";
 
-/* ── Divider ─────────────────────────────────── */
+/* ── Section divider — retro style ─────────── */
 function Divider({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-4 my-10 animate-fade-in">
-      <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, transparent, #1e1e26)" }} />
-      <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[#484858] whitespace-nowrap px-2">
-        {label}
-      </span>
-      <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, transparent, #1e1e26)" }} />
+    <div className="flex items-center gap-3 my-10">
+      <span className="mono-label" style={{ color: "#7c3aed" }}>//</span>
+      <span className="mono-label" style={{ color: "#505065" }}>{label}</span>
+      <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.04)" }} />
     </div>
   );
 }
 
-/* ── ToolBtn ─────────────────────────────────── */
+/* ── Tool button — retro style ──────────────── */
 function ToolBtn({ label, icon: Icon, onClick }: { label: string; icon: React.ElementType; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
       aria-label={label}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap flex-shrink-0"
-      style={{ background: "#16161e", color: "#808090", border: "1px solid #1e1e2a" }}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 whitespace-nowrap flex-shrink-0 mono-label"
+      style={{ background: "transparent", color: "#606070", border: "1px solid rgba(255,255,255,0.07)" }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.background = "#7c6af712"; el.style.borderColor = "#7c6af740"; el.style.color = "#a78bfa";
+        el.style.background = "rgba(124,58,237,0.12)";
+        el.style.borderColor = "rgba(124,58,237,0.4)";
+        el.style.color = "#c4b5fd";
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.background = "#16161e"; el.style.borderColor = "#1e1e2a"; el.style.color = "#808090";
+        el.style.background = "transparent";
+        el.style.borderColor = "rgba(255,255,255,0.07)";
+        el.style.color = "#606070";
       }}
     >
       <Icon size={12} /> {label}
@@ -81,42 +83,33 @@ function ToolBtn({ label, icon: Icon, onClick }: { label: string; icon: React.El
   );
 }
 
-/* ── Compact status bar (reads localStorage) ─── */
-function StatusBar() {
-  const [streak, setStreak]   = useState(0);
-  const [pct,    setPct]      = useState(0);
-  const [goal,   setGoal]     = useState(0);
+/* ── Inline status (reads localStorage) ────── */
+function HeroStatus() {
+  const [streak, setStreak] = useState(0);
+  const [pct,    setPct]    = useState(0);
 
   useEffect(() => {
     try {
       const s  = JSON.parse(localStorage.getItem("roadmap_streak_v1") || "{}");
       const ch = JSON.parse(localStorage.getItem("roadmap_checks_v1") || "{}");
-      const g  = JSON.parse(localStorage.getItem("roadmap_weekly_goal_v1") || "{}");
       setStreak(s.currentStreak ?? 0);
       setPct(Math.round((Object.values(ch).filter(Boolean).length / 95) * 100));
-      setGoal(g.hoursPerWeek ?? 0);
     } catch { /* ignore */ }
   }, []);
 
-  const items = [
-    { icon: Flame,  label: `${streak} dia${streak !== 1 ? "s" : ""}`, color: streak >= 7 ? "#f97316" : streak >= 1 ? "#f59e0b" : "#505060", show: true },
-    { icon: Target, label: `${pct}% completo`,  color: "#7c6af7", show: true },
-    { icon: Target, label: `Meta: ${goal}h/sem`, color: "#34d399", show: goal > 0 },
-  ].filter(i => i.show);
-
   return (
-    <div className="flex items-center gap-3 flex-wrap">
-      {items.map(({ icon: Icon, label, color }) => (
-        <span key={label} className="flex items-center gap-1.5 text-xs" style={{ color }}>
-          <Icon size={12} />
-          {label}
-        </span>
-      ))}
+    <div className="flex flex-wrap items-center gap-4">
+      <span className="flex items-center gap-1.5 mono-label" style={{ color: streak > 0 ? "#f59e0b" : "#505065" }}>
+        <Flame size={11} /> {streak} dia{streak !== 1 ? "s" : ""} de streak
+      </span>
+      <span className="flex items-center gap-1.5 mono-label" style={{ color: pct > 0 ? "#7c3aed" : "#505065" }}>
+        <Target size={11} /> {pct}% completo
+      </span>
     </div>
   );
 }
 
-/* ── Main ────────────────────────────────────── */
+/* ── Main page ───────────────────────────────── */
 export default function Home() {
   const { t } = useI18n();
 
@@ -139,12 +132,8 @@ export default function Home() {
     setShowCertificate(false); setShowShortcuts(false);
   }, []);
 
-  const openSearch = useCallback(() => {
-    document.dispatchEvent(new CustomEvent("open-search"));
-  }, []);
-
   useKeyboardShortcuts({
-    onSearch:     openSearch,
+    onSearch:     () => document.dispatchEvent(new CustomEvent("open-search")),
     onPomodoro:   () => setShowPomodoro(v => !v),
     onFlashcards: () => setShowFlashcards(v => !v),
     onNotes:      () => setShowNotes(v => !v),
@@ -154,7 +143,7 @@ export default function Home() {
   });
 
   return (
-    <div className="flex min-h-screen bg-[#0d0d12]">
+    <div className="flex min-h-screen" style={{ background: "#080812" }}>
       <Sidebar />
       <MobileNav />
       <BottomNav />
@@ -178,67 +167,90 @@ export default function Home() {
 
       <main id="main-content" className="flex-1 lg:ml-52 w-full pb-16 lg:pb-0">
 
-        {/* ══ HERO — cabe numa tela ══════════════════ */}
-        <section
-          id="overview"
-          className="relative border-b border-[#1a1a22] animate-fade-in-up"
-          style={{ background: "#0f0f16" }}
-        >
-          {/* Ambient glow */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute -top-40 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04]"
-              style={{ background: "radial-gradient(circle, #7c6af7, transparent)", transform: "translateX(30%)" }} />
-          </div>
+        {/* ════════════════════════════════════════
+            HERO — Dev Retro
+        ════════════════════════════════════════ */}
+        <section id="overview" className="relative overflow-hidden" style={{ background: "#080812" }}>
 
-          <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10 pt-8 pb-6">
+          {/* Accent bar top */}
+          <div className="accent-bar" />
 
-            {/* ── Título ── */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-3 flex-wrap">
-                <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#505060]">
-                  {t("heroTag")}
-                </span>
-                <span
-                  className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
-                  style={{ background: "#34d39910", color: "#34d399", border: "1px solid #34d39925" }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] glow-dot" />
-                  Open Source
-                </span>
+          {/* Dot grid overlay */}
+          <div className="dot-grid absolute inset-0 pointer-events-none" />
+
+          {/* Radial purple bloom */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse 60% 50% at 70% 40%, rgba(124,58,237,0.07) 0%, transparent 70%)" }} />
+
+          <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-14 md:py-16">
+
+            {/* ── Terminal label ── */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="mono-label" style={{ color: "#f59e0b" }}>
+                $ dev-roadmap --year 2025
+              </span>
+              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.05)" }} />
+              <span className="flex items-center gap-1.5 mono-label" style={{ color: "#22c55e" }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] glow-dot" />
+                open source
+              </span>
+            </div>
+
+            {/* ── Headline ── */}
+            <h1 className="font-black leading-none tracking-tight mb-2"
+              style={{ fontSize: "clamp(2.2rem, 5vw, 3.5rem)", color: "#f0f0f8" }}>
+              Do zero ao{" "}
+              <span style={{
+                background: "linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}>
+                dev júnior
+              </span>
+            </h1>
+            <p className="font-semibold mb-6" style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.6rem)", color: "#505065" }}>
+              em 9 meses. <span style={{ color: "#f59e0b" }}>⚡</span>
+            </p>
+
+            {/* ── Stats strip ── */}
+            <div className="flex flex-wrap gap-6 mb-8">
+              {[
+                { n: "95",   l: "módulos" },
+                { n: "5",    l: "fases" },
+                { n: "100%", l: "gratuito" },
+                { n: "∞",    l: "conteúdo" },
+              ].map(({ n, l }) => (
+                <div key={l}>
+                  <p className="text-2xl font-black" style={{ color: "#f0f0f8", lineHeight: 1 }}>{n}</p>
+                  <p className="mono-label mt-1" style={{ color: "#505065" }}>{l}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* ── CTA + status ── */}
+            <div className="flex flex-wrap items-center gap-4 mb-12">
+              <HeroCTA />
+              <HeroStatus />
+            </div>
+
+            {/* ── Widget cards ── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div data-tour="daily-challenge">
+                <DailyChallenge />
               </div>
-              <h1 className="text-2xl sm:text-[1.7rem] font-extrabold text-[#ededf4] leading-tight tracking-tight mb-3">
-                {t("heroTitle1")}{" "}
-                <span style={{
-                  background: "linear-gradient(135deg, #7c6af7 0%, #a78bfa 60%, #7c6af7 100%)",
-                  backgroundSize: "200% auto",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  animation: "shimmer 4s linear infinite",
-                }}>
-                  {t("heroTitle2")}
-                </span>
-              </h1>
-              <div className="flex flex-wrap items-center gap-4">
-                <StatusBar />
-                <HeroCTA />
+              <div data-tour="next-step">
+                <NextStepWidget />
               </div>
             </div>
 
-            {/* ── Widgets compactos: 2 colunas ── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
-              <div data-tour="daily-challenge"><DailyChallenge /></div>
-              <div data-tour="next-step"><NextStepWidget /></div>
-            </div>
-
-            {/* ── Ferramentas ── */}
+            {/* ── Tools ── */}
             <div data-tour="quick-actions">
-              <div className="flex items-center gap-2 mb-2.5">
-                <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#383840]">
-                  Ferramentas
-                </span>
-                <div className="flex-1 h-px bg-[#18181f]" />
+              <div className="flex items-center gap-3 mb-3">
+                <span className="mono-label" style={{ color: "#7c3aed" }}>&gt;_</span>
+                <span className="mono-label" style={{ color: "#505065" }}>ferramentas</span>
+                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.04)" }} />
               </div>
-              <div className="flex gap-2 overflow-x-auto scrollbar-none pb-0.5 -mx-1 px-1">
+              <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1">
                 <ToolBtn label="Flashcards"   icon={Brain}          onClick={() => setShowFlashcards(true)} />
                 <ToolBtn label="Pomodoro"     icon={Timer}          onClick={() => setShowPomodoro(true)} />
                 <ToolBtn label="Quiz"         icon={HelpCircle}     onClick={() => setShowQuiz(true)} />
@@ -255,10 +267,13 @@ export default function Home() {
                 <LocaleToggle />
               </div>
             </div>
+
           </div>
         </section>
 
-        {/* ══ SEÇÕES DE CONTEÚDO ════════════════════ */}
+        {/* ════════════════════════════════════════
+            CONTEÚDO
+        ════════════════════════════════════════ */}
         <div className="max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-4">
 
           <Divider label={t("divModules")} />
@@ -267,7 +282,6 @@ export default function Home() {
           <Divider label={t("divProjects")} />
           <ProjectsSection />
 
-          {/* Progresso — widgets completos ficam aqui */}
           <div id="progresso">
             <Divider label={t("divProgress")} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -300,20 +314,25 @@ export default function Home() {
           <Divider label={t("divTips")} />
           <TipsSection />
 
-          <footer className="border-t border-[#1a1a22] pt-6 mt-8 mb-4 text-center" role="contentinfo">
-            <p className="text-xs text-[#303038]">{t("footer")}</p>
-            <p className="text-[10px] text-[#252530] mt-1">
-              <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ background: "#1e1e2a", border: "1px solid #303040" }}>?</kbd>{" "}
-              atalhos ·{" "}
+          <footer className="pt-8 mt-8 mb-4 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+            <p className="mono-label" style={{ color: "#383850" }}>{t("footer")}</p>
+            <p className="mono-label mt-2" style={{ color: "#303045" }}>
+              pressione{" "}
+              <kbd className="px-1.5 py-0.5 rounded text-[10px]" style={{ background: "#1a1a2e", border: "1px solid rgba(255,255,255,0.08)", color: "#7c3aed" }}>?</kbd>
+              {" "}para atalhos ·{" "}
               <button
                 onClick={() => document.dispatchEvent(new CustomEvent("start-tour"))}
-                className="underline hover:text-[#606070] transition-colors"
+                className="underline transition-colors"
+                style={{ color: "#383850" }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#7c3aed"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "#383850"}
               >
-                <Map size={10} className="inline mr-0.5" />Tour
+                tour
               </button>
             </p>
           </footer>
         </div>
+
       </main>
     </div>
   );
