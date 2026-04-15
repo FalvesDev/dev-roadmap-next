@@ -5,12 +5,25 @@ import {
   ChevronDown, CheckCircle2, Circle,
   ExternalLink, BookOpen, Play, FileText,
   Wrench, GraduationCap, BookMarked, PenLine,
+  Flag, RotateCcw,
 } from "lucide-react";
 import { phases } from "@/lib/roadmap-data";
 import { articles } from "@/lib/articles-data";
 import { descriptions } from "@/lib/topic-descriptions";
+import { useLearningPath, pathMeta } from "@/components/PathSelector";
 import type { CheckItem } from "@/lib/roadmap-data";
 import type { Article, ArticleType } from "@/lib/articles-data";
+
+const REVIEW_KEY = "roadmap_review_v1";
+
+function loadReview(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try { return new Set(JSON.parse(localStorage.getItem(REVIEW_KEY) || "[]")); }
+  catch { return new Set(); }
+}
+function saveReview(s: Set<string>) {
+  localStorage.setItem(REVIEW_KEY, JSON.stringify([...s]));
+}
 
 const STORAGE_KEY = "roadmap_checks_v1";
 const NOTES_KEY = "roadmap_notes_v1";
@@ -172,12 +185,15 @@ const typeMeta: Record<ArticleType, { label: string; color: string }> = {
 export function ModuleSection() {
   const [activePhase, setActivePhase] = useState(0);
   const [checks, setChecks] = useState<Record<string, boolean>>({});
-  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [notes, setNotes]   = useState<Record<string, string>>({});
+  const [review, setReview] = useState<Set<string>>(new Set());
+  const { path } = useLearningPath();
 
   useEffect(() => {
     const load = () => {
       setChecks(loadChecks());
       setNotes(loadNotes());
+      setReview(loadReview());
     };
     load();
     const interval = setInterval(load, 2000);
@@ -194,6 +210,22 @@ export function ModuleSection() {
     const next = { ...notes, [id]: text };
     setNotes(next);
     saveNotes(next);
+  }
+
+  function toggleReview(id: string) {
+    const next = new Set(review);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setReview(next);
+    saveReview(next);
+  }
+
+  function resetPhase(phaseIdx: number) {
+    if (!confirm(`Reiniciar toda a Fase ${phaseIdx + 1}? O progresso desta fase será apagado.`)) return;
+    const phaseItems = phases[phaseIdx].cards.flatMap(c => c.items).map(i => i.id);
+    const next = { ...checks };
+    phaseItems.forEach(id => { delete next[id]; });
+    setChecks(next);
+    saveChecks(next);
   }
 
   const phase = phases[activePhase];
@@ -253,18 +285,39 @@ export function ModuleSection() {
         key={`header-${activePhase}`}
       >
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <div
-              className="w-1 h-5 rounded-full"
+              className="w-1 h-5 rounded-full flex-shrink-0"
               style={{ background: phaseColor, boxShadow: `0 0 8px ${phaseColor}80` }}
             />
             <h3 className="text-lg font-semibold text-[#ececf0]">{clean(phase.title)}</h3>
+            {path && pathMeta[path].focus.some(f =>
+              phase.topics.some(t => t.toLowerCase().includes(f.toLowerCase()) || f.toLowerCase().includes(t.toLowerCase()))
+            ) && (
+              <span
+                className="text-[9px] font-bold px-2 py-0.5 rounded"
+                style={{ background: `${pathMeta[path].color}18`, color: pathMeta[path].color, border: `1px solid ${pathMeta[path].color}30` }}
+              >
+                ✓ {pathMeta[path].label}
+              </span>
+            )}
           </div>
           <p className="text-sm text-[#8f8f9a] leading-relaxed max-w-2xl">{phase.description}</p>
         </div>
-        <div className="text-right flex-shrink-0">
-          <p className="text-[10px] text-[#909098] font-medium uppercase tracking-wider">duração</p>
-          <p className="text-sm font-semibold text-[#c0c0c8] mt-0.5">{phase.duration}</p>
+        <div className="text-right flex-shrink-0 space-y-2">
+          <div>
+            <p className="text-[10px] text-[#909098] font-medium uppercase tracking-wider">duração</p>
+            <p className="text-sm font-semibold text-[#c0c0c8] mt-0.5">{phase.duration}</p>
+          </div>
+          <button
+            onClick={() => resetPhase(activePhase)}
+            className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md transition-colors ml-auto"
+            style={{ color: "#484858", background: "#1a1a24", border: "1px solid #252535" }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#ef444480"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#484858"; }}
+          >
+            <RotateCcw size={10} /> Reiniciar fase
+          </button>
         </div>
       </div>
 
@@ -294,6 +347,8 @@ export function ModuleSection() {
               onToggle={toggle}
               notes={notes}
               onNoteChange={updateNote}
+              review={review}
+              onToggleReview={toggleReview}
               phaseColor={phaseColor}
               doneItems={doneItems}
               totalItems={totalItems}
@@ -313,7 +368,7 @@ export function ModuleSection() {
 
 function ModuleCard({
   title, subtitle, week, objective, items, checks, onToggle,
-  notes, onNoteChange,
+  notes, onNoteChange, review, onToggleReview,
   phaseColor, doneItems, totalItems, cardPct, isComplete, inProgress,
   defaultOpen, moduleArticles, animDelay,
 }: {
@@ -326,6 +381,8 @@ function ModuleCard({
   onToggle: (id: string) => void;
   notes: Record<string, string>;
   onNoteChange: (id: string, text: string) => void;
+  review: Set<string>;
+  onToggleReview: (id: string) => void;
   phaseColor: string;
   doneItems: number;
   totalItems: number;
@@ -501,6 +558,8 @@ function ModuleCard({
                 onToggle={() => onToggle(item.id)}
                 note={notes[item.id] ?? ""}
                 onNoteChange={(text) => onNoteChange(item.id, text)}
+                flagged={review.has(item.id)}
+                onFlag={() => onToggleReview(item.id)}
                 phaseColor={phaseColor}
               />
             ))}
@@ -512,13 +571,15 @@ function ModuleCard({
 }
 
 function CheckRow({
-  item, checked, onToggle, note, onNoteChange, phaseColor,
+  item, checked, onToggle, note, onNoteChange, flagged, onFlag, phaseColor,
 }: {
   item: CheckItem;
   checked: boolean;
   onToggle: () => void;
   note: string;
   onNoteChange: (text: string) => void;
+  flagged: boolean;
+  onFlag: () => void;
   phaseColor: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -577,6 +638,16 @@ function CheckRow({
           >
             {diffLabel[item.difficulty]}
           </span>
+          {/* Flag for review */}
+          <button
+            onClick={(e) => { e.stopPropagation(); onFlag(); }}
+            title={flagged ? "Remover da lista de revisão" : "Marcar para revisão"}
+            className="w-5 h-5 flex items-center justify-center rounded transition-all duration-150"
+            style={{ color: flagged ? "#f59e0b" : "#606070", background: flagged ? "#f59e0b18" : "transparent" }}
+          >
+            <Flag size={11} strokeWidth={1.5} />
+          </button>
+
           {/* Note button */}
           <button
             onClick={(e) => { e.stopPropagation(); setNoteOpen((v) => !v); }}
