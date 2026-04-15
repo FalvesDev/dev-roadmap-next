@@ -29,6 +29,7 @@ const navSections = [
     items: [
       { href: "#artigos",      label: "Artigos & Vídeos", icon: Newspaper },
       { href: "#recursos",     label: "Links curados",    icon: Link2 },
+      { href: "#glossario",    label: "Glossário",        icon: BookOpen },
     ],
   },
   {

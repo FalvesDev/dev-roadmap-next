@@ -26,7 +26,12 @@ import { PhaseCompleteModal } from "@/components/PhaseCompleteModal";
 import { NextStepWidget } from "@/components/NextStepWidget";
 import { NotesDashboard } from "@/components/NotesDashboard";
 import { TabTitle } from "@/components/TabTitle";
-import { Brain, Share2, PenLine } from "lucide-react";
+import { PomodoroTimer } from "@/components/PomodoroTimer";
+import { GlossarySection } from "@/components/GlossarySection";
+import { WeeklyGoal } from "@/components/WeeklyGoal";
+import { AchievementsPanel, AchievementsBadge } from "@/components/AchievementsPanel";
+import { BackupRestore } from "@/components/BackupRestore";
+import { Brain, Share2, PenLine, Timer, DatabaseBackup } from "lucide-react";
 
 function Divider({ label }: { label: string }) {
   return (
@@ -41,9 +46,12 @@ function Divider({ label }: { label: string }) {
 }
 
 export default function Home() {
-  const [showFlashcards, setShowFlashcards] = useState(false);
-  const [showExport, setShowExport]     = useState(false);
-  const [showNotes, setShowNotes]       = useState(false);
+  const [showFlashcards,   setShowFlashcards]   = useState(false);
+  const [showExport,       setShowExport]       = useState(false);
+  const [showNotes,        setShowNotes]        = useState(false);
+  const [showPomodoro,     setShowPomodoro]     = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [showBackup,       setShowBackup]       = useState(false);
 
   return (
     <div className="flex min-h-screen bg-[#0d0d12]">
@@ -55,9 +63,12 @@ export default function Home() {
       <TabTitle />
       <OnboardingModal />
       <PhaseCompleteModal />
-      {showFlashcards && <FlashcardMode onClose={() => setShowFlashcards(false)} />}
-      {showExport     && <ExportProgress onClose={() => setShowExport(false)} />}
-      {showNotes      && <NotesDashboard onClose={() => setShowNotes(false)} />}
+      {showFlashcards   && <FlashcardMode     onClose={() => setShowFlashcards(false)} />}
+      {showExport       && <ExportProgress    onClose={() => setShowExport(false)} />}
+      {showNotes        && <NotesDashboard    onClose={() => setShowNotes(false)} />}
+      {showPomodoro     && <PomodoroTimer     onClose={() => setShowPomodoro(false)} />}
+      {showAchievements && <AchievementsPanel onClose={() => setShowAchievements(false)} />}
+      {showBackup       && <BackupRestore     onClose={() => setShowBackup(false)} />}
 
       <main className="flex-1 lg:ml-52 px-5 md:px-10 py-10 max-w-5xl mx-auto w-full">
 
@@ -80,11 +91,13 @@ export default function Home() {
               <HeroCTA />
 
               {/* Quick actions */}
-              <div className="flex flex-wrap gap-2 mb-5">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {[
-                  { label: "Revisão rápida",    icon: Brain,    onClick: () => setShowFlashcards(true) },
-                  { label: "Minhas notas",       icon: PenLine,  onClick: () => setShowNotes(true) },
-                  { label: "Exportar progresso", icon: Share2,   onClick: () => setShowExport(true) },
+                  { label: "Revisão rápida",    icon: Brain,         onClick: () => setShowFlashcards(true) },
+                  { label: "Pomodoro",           icon: Timer,         onClick: () => setShowPomodoro(true) },
+                  { label: "Minhas notas",       icon: PenLine,       onClick: () => setShowNotes(true) },
+                  { label: "Exportar imagem",    icon: Share2,        onClick: () => setShowExport(true) },
+                  { label: "Backup / Restore",   icon: DatabaseBackup, onClick: () => setShowBackup(true) },
                 ].map(({ label, icon: Icon, onClick }) => (
                   <button
                     key={label}
@@ -97,6 +110,7 @@ export default function Home() {
                     <Icon size={12} /> {label}
                   </button>
                 ))}
+                <AchievementsBadge onClick={() => setShowAchievements(true)} />
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -113,6 +127,7 @@ export default function Home() {
             <div className="md:w-64 flex-shrink-0 space-y-4">
               <SearchTrigger />
               <NextStepWidget />
+              <WeeklyGoal />
               <PathSelector />
               <StreakTracker />
             </div>
@@ -140,6 +155,10 @@ export default function Home() {
         <Divider label="Materiais de estudo" />
         <ArticlesSection />
         <ResourceGrid />
+
+        {/* ── GLOSSARY ── */}
+        <Divider label="Glossário técnico" />
+        <GlossarySection />
 
         {/* ── INTERVIEW PREP ── */}
         <Divider label="Prep para entrevista" />
