@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, BarChart2, BookOpen,
   Newspaper, Link2, TrendingUp, Lightbulb,
-  Layers, MessageSquare, FolderGit2,
+  Layers, MessageSquare, FolderGit2, Search,
 } from "lucide-react";
-import { Search } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { LocaleToggle } from "@/components/I18nProvider";
 
@@ -14,37 +13,37 @@ const navSections = [
   {
     label: "Início",
     items: [
-      { href: "#overview",     label: "Visão geral",    icon: LayoutDashboard },
-      { href: "#progresso",    label: "Progresso",      icon: BarChart2 },
+      { href: "#overview",    label: "Visão geral",       icon: LayoutDashboard },
+      { href: "#progresso",   label: "Progresso",         icon: BarChart2 },
     ],
   },
   {
     label: "Aprender",
     items: [
-      { href: "#checklist",    label: "Módulos",            icon: BookOpen },
-      { href: "#projetos",     label: "Projetos guiados",   icon: FolderGit2 },
-      { href: "#arquitetura",  label: "Arquitetura & Redes", icon: Layers },
+      { href: "#checklist",   label: "Módulos",           icon: BookOpen },
+      { href: "#projetos",    label: "Projetos",          icon: FolderGit2 },
+      { href: "#arquitetura", label: "Arquitetura",       icon: Layers },
     ],
   },
   {
     label: "Materiais",
     items: [
-      { href: "#artigos",      label: "Artigos & Vídeos", icon: Newspaper },
-      { href: "#recursos",     label: "Links curados",    icon: Link2 },
-      { href: "#glossario",    label: "Glossário",        icon: BookOpen },
+      { href: "#artigos",     label: "Artigos & Vídeos",  icon: Newspaper },
+      { href: "#recursos",    label: "Links curados",     icon: Link2 },
+      { href: "#glossario",   label: "Glossário",         icon: BookOpen },
     ],
   },
   {
     label: "Carreira",
     items: [
-      { href: "#entrevista",   label: "Prep entrevista",     icon: MessageSquare },
-      { href: "#mercado",      label: "Mercado de trabalho", icon: TrendingUp },
-      { href: "#dicas",        label: "Dicas & Referência",  icon: Lightbulb },
+      { href: "#entrevista",  label: "Entrevistas",       icon: MessageSquare },
+      { href: "#mercado",     label: "Mercado",           icon: TrendingUp },
+      { href: "#dicas",       label: "Dicas",             icon: Lightbulb },
     ],
   },
 ];
 
-const allItems = navSections.flatMap((s) => s.items);
+const allItems = navSections.flatMap(s => s.items);
 
 export function Sidebar() {
   const [active, setActive] = useState("overview");
@@ -65,32 +64,37 @@ export function Sidebar() {
   return (
     <aside
       className="fixed top-0 left-0 h-screen w-52 flex flex-col z-50 hidden lg:flex"
-      style={{ background: "#14141c", borderRight: "1px solid #26263a" }}
+      style={{ background: "#0c0c18", borderRight: "1px solid rgba(255,255,255,0.06)" }}
     >
+      {/* Accent bar */}
+      <div className="accent-bar flex-shrink-0" />
+
       {/* Logo */}
-      <div className="px-4 pt-5 pb-3" style={{ borderBottom: "1px solid #26263a" }}>
-        <div className="flex items-center gap-2.5 mb-1">
-          <div className="w-5 h-5 rounded bg-[#6d5ef5] flex items-center justify-center flex-shrink-0">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <div className="px-4 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="flex items-center gap-2.5 mb-0.5">
+          <div
+            className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7)" }}
+          >
+            <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
               <path d="M2 8V2l6 3-6 3z" fill="white" />
             </svg>
           </div>
-          <span className="text-sm font-semibold text-[#eeeef6] tracking-tight">Dev Roadmap</span>
+          <span className="text-[13px] font-bold text-[#f0f0f8] tracking-tight">Dev Roadmap</span>
         </div>
-        <p className="text-[10px] pl-7" style={{ color: "#8080a0" }}>Python · TypeScript · 2025</p>
+        <p className="mono-label pl-[34px] mt-0.5" style={{ color: "#505065" }}>
+          python · typescript
+        </p>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 px-2 py-4 overflow-y-auto" data-tour="sidebar-modules">
-        {navSections.map((section) => (
+        {navSections.map(section => (
           <div key={section.label} className="mb-5">
-            <p
-              className="text-[9px] font-bold uppercase tracking-[0.18em] px-2 mb-1.5"
-              style={{ color: "#909098" }}
-            >
+            <p className="mono-label px-2 mb-1.5" style={{ color: "#505065" }}>
               {section.label}
             </p>
-            {section.items.map((item) => {
+            {section.items.map(item => {
               const isActive = active === item.href.slice(1);
               const Icon = item.icon;
               return (
@@ -99,30 +103,28 @@ export function Sidebar() {
                   href={item.href}
                   className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs mb-0.5"
                   style={{
-                    background: isActive ? "#1e1e30" : "transparent",
-                    color: isActive ? "#ddddf0" : "#9090b0",
-                    borderLeft: isActive ? "2px solid #6d5ef5" : "2px solid transparent",
-                    transition: "background 0.15s ease, color 0.15s ease, border-color 0.15s ease",
-                    boxShadow: isActive ? "inset 0 0 20px #6d5ef508" : "none",
+                    background:  isActive ? "rgba(124,58,237,0.12)" : "transparent",
+                    color:       isActive ? "#c4b5fd" : "#707088",
+                    borderLeft:  isActive ? "2px solid #7c3aed" : "2px solid transparent",
+                    transition:  "all 0.15s ease",
                   }}
-                  onMouseEnter={(e) => {
+                  onMouseEnter={e => {
                     if (!isActive) {
-                      (e.currentTarget as HTMLElement).style.color = "#c8c8e4";
-                      (e.currentTarget as HTMLElement).style.background = "#18182a";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.color = "#c0c0e0";
+                      el.style.background = "rgba(255,255,255,0.04)";
                     }
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={e => {
                     if (!isActive) {
-                      (e.currentTarget as HTMLElement).style.color = "#9090b0";
-                      (e.currentTarget as HTMLElement).style.background = "transparent";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.color = "#707088";
+                      el.style.background = "transparent";
                     }
                   }}
                 >
-                  <Icon
-                    size={13}
-                    strokeWidth={isActive ? 2 : 1.5}
-                    color={isActive ? "#7c6af7" : "#606080"}
-                  />
+                  <Icon size={13} strokeWidth={isActive ? 2 : 1.5}
+                    color={isActive ? "#a78bfa" : "#505065"} />
                   {item.label}
                 </a>
               );
@@ -131,8 +133,9 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="px-3 py-3" style={{ borderTop: "1px solid #20202e" }}>
-        <div className="flex items-center gap-2 mb-2">
+      {/* Footer */}
+      <div className="px-3 py-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="flex items-center gap-2 mb-1.5">
           <ThemeToggle />
           <LocaleToggle />
           <button
@@ -140,14 +143,14 @@ export function Sidebar() {
             aria-label="Buscar (Ctrl K)"
             title="Buscar (Ctrl K)"
             className="p-1.5 rounded-md transition-colors"
-            style={{ color: "#606070" }}
+            style={{ color: "#505065" }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#9090b0"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "#606070"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "#505065"}
           >
             <Search size={13} />
           </button>
         </div>
-        <p className="text-[9px] px-2 mt-1" style={{ color: "#484860" }}>v3.0 · 2025</p>
+        <p className="mono-label px-1" style={{ color: "#383850" }}>v3.0 · 2025</p>
       </div>
     </aside>
   );

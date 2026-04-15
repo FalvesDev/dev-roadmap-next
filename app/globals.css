@@ -1,18 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0d0d12;
-  --foreground: #d8d8e2;
-  --c-sidebar:  #14141c;
-  --c-card:     #16161e;
-  --c-surface:  #13131a;
-  --c-inner:    #111118;
-  --c-border:   #222228;
-  --c-border-s: #1a1a22;
-  --c-text-1:   #ededf4;
-  --c-text-2:   #a0a0b0;
-  --c-text-3:   #909098;
-  --c-text-4:   #606070;
+  --background: #080812;
+  --foreground: #f0f0f8;
+  --c-sidebar:  #0c0c18;
+  --c-card:     #0f0f1e;
+  --c-surface:  #111120;
+  --c-inner:    #0a0a14;
+  --c-border:   rgba(255,255,255,0.07);
+  --c-border-s: rgba(255,255,255,0.04);
+  --c-text-1:   #f0f0f8;
+  --c-text-2:   #a0a0c0;
+  --c-text-3:   #707088;
+  --c-text-4:   #505065;
+  --accent:     #7c3aed;
+  --accent-2:   #f59e0b;
 }
 
 [data-theme="light"] {
@@ -245,6 +247,50 @@ textarea:focus-visible {
 }
 .skip-to-content:focus {
   top: 8px;
+}
+
+/* ── Dev Retro utilities ── */
+
+/* Dot grid background */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Accent gradient bar */
+.accent-bar {
+  height: 2px;
+  background: linear-gradient(90deg, #7c3aed 0%, #f59e0b 35%, #7c3aed 65%, #f59e0b 100%);
+  background-size: 200% 100%;
+  animation: shimmer 6s linear infinite;
+}
+
+/* Glow button */
+.btn-glow {
+  box-shadow: 0 0 20px rgba(124,58,237,0.35), 0 0 40px rgba(124,58,237,0.1);
+  transition: box-shadow 0.2s ease;
+}
+.btn-glow:hover {
+  box-shadow: 0 0 28px rgba(124,58,237,0.5), 0 0 56px rgba(124,58,237,0.15);
+}
+
+/* Retro card */
+.retro-card {
+  background: #0f0f1e;
+  border: 1px solid rgba(255,255,255,0.07);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.retro-card:hover {
+  border-color: rgba(124,58,237,0.3);
+  box-shadow: 0 0 0 1px rgba(124,58,237,0.1), 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* Monospace label */
+.mono-label {
+  font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* ── Mobile utilities ── */
