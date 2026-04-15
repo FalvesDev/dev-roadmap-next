@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { PathProvider } from "@/components/PathSelector";
 
 export const metadata: Metadata = {
   title: "Dev Roadmap — Python & TypeScript",
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="bg-[#0a0a0a] text-[#e5e5e5] min-h-full antialiased">
-        {children}
+        <PathProvider>
+          {children}
+        </PathProvider>
       </body>
     </html>
   );

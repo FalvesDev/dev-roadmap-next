@@ -12,6 +12,9 @@ import { GlobalSearch } from "@/components/GlobalSearch";
 import { SearchTrigger } from "@/components/SearchTrigger";
 import { MobileNav } from "@/components/MobileNav";
 import { HeroCTA } from "@/components/HeroCTA";
+import { PathSelector } from "@/components/PathSelector";
+import { StreakTracker } from "@/components/StreakTracker";
+import { InterviewSection } from "@/components/InterviewSection";
 
 function Divider({ label }: { label: string }) {
   return (
@@ -65,8 +68,10 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <div className="md:w-64 flex-shrink-0">
+            <div className="md:w-64 flex-shrink-0 space-y-4">
               <SearchTrigger />
+              <PathSelector />
+              <StreakTracker />
             </div>
           </div>
         </section>
@@ -88,6 +93,10 @@ export default function Home() {
         <Divider label="Materiais de estudo" />
         <ArticlesSection />
         <ResourceGrid />
+
+        {/* ── INTERVIEW PREP ── */}
+        <Divider label="Prep para entrevista" />
+        <InterviewSection />
 
         {/* ── CAREER ── */}
         <Divider label="Mercado de trabalho" />
