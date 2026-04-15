@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
   ChevronDown, CheckCircle2, Circle,
   ExternalLink, BookOpen, Play, FileText,
-  Wrench, GraduationCap, BookMarked,
+  Wrench, GraduationCap, BookMarked, PenLine,
 } from "lucide-react";
 import { phases } from "@/lib/roadmap-data";
 import { articles } from "@/lib/articles-data";
@@ -13,6 +13,16 @@ import type { CheckItem } from "@/lib/roadmap-data";
 import type { Article, ArticleType } from "@/lib/articles-data";
 
 const STORAGE_KEY = "roadmap_checks_v1";
+const NOTES_KEY = "roadmap_notes_v1";
+
+function loadNotes(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  try { return JSON.parse(localStorage.getItem(NOTES_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveNotes(n: Record<string, string>) {
+  localStorage.setItem(NOTES_KEY, JSON.stringify(n));
+}
 
 function loadChecks(): Record<string, boolean> {
   if (typeof window === "undefined") return {};
@@ -162,11 +172,15 @@ const typeMeta: Record<ArticleType, { label: string; color: string }> = {
 export function ModuleSection() {
   const [activePhase, setActivePhase] = useState(0);
   const [checks, setChecks] = useState<Record<string, boolean>>({});
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const load = () => setChecks(loadChecks());
+    const load = () => {
+      setChecks(loadChecks());
+      setNotes(loadNotes());
+    };
     load();
-    const interval = setInterval(load, 1000);
+    const interval = setInterval(load, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -174,6 +188,12 @@ export function ModuleSection() {
     const next = { ...checks, [id]: !checks[id] };
     setChecks(next);
     saveChecks(next);
+  }
+
+  function updateNote(id: string, text: string) {
+    const next = { ...notes, [id]: text };
+    setNotes(next);
+    saveNotes(next);
   }
 
   const phase = phases[activePhase];
@@ -272,6 +292,8 @@ export function ModuleSection() {
               items={card.items}
               checks={checks}
               onToggle={toggle}
+              notes={notes}
+              onNoteChange={updateNote}
               phaseColor={phaseColor}
               doneItems={doneItems}
               totalItems={totalItems}
@@ -291,6 +313,7 @@ export function ModuleSection() {
 
 function ModuleCard({
   title, subtitle, week, objective, items, checks, onToggle,
+  notes, onNoteChange,
   phaseColor, doneItems, totalItems, cardPct, isComplete, inProgress,
   defaultOpen, moduleArticles, animDelay,
 }: {
@@ -301,6 +324,8 @@ function ModuleCard({
   items: CheckItem[];
   checks: Record<string, boolean>;
   onToggle: (id: string) => void;
+  notes: Record<string, string>;
+  onNoteChange: (id: string, text: string) => void;
   phaseColor: string;
   doneItems: number;
   totalItems: number;
@@ -474,6 +499,8 @@ function ModuleCard({
                 item={item}
                 checked={!!checks[item.id]}
                 onToggle={() => onToggle(item.id)}
+                note={notes[item.id] ?? ""}
+                onNoteChange={(text) => onNoteChange(item.id, text)}
                 phaseColor={phaseColor}
               />
             ))}
@@ -485,15 +512,19 @@ function ModuleCard({
 }
 
 function CheckRow({
-  item, checked, onToggle, phaseColor,
+  item, checked, onToggle, note, onNoteChange, phaseColor,
 }: {
   item: CheckItem;
   checked: boolean;
   onToggle: () => void;
+  note: string;
+  onNoteChange: (text: string) => void;
   phaseColor: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
   const desc = descriptions[item.id];
+  const hasNote = note.trim().length > 0;
 
   const diffColor: Record<string, string> = {
     easy:   "#3a7a50",
@@ -546,6 +577,18 @@ function CheckRow({
           >
             {diffLabel[item.difficulty]}
           </span>
+          {/* Note button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); setNoteOpen((v) => !v); }}
+            title="Anotação pessoal"
+            className="w-5 h-5 flex items-center justify-center rounded transition-all duration-150 relative"
+            style={{ color: noteOpen || hasNote ? "#7c6af7" : "#606070", background: noteOpen || hasNote ? "#7c6af718" : "transparent" }}
+          >
+            <PenLine size={11} strokeWidth={1.5} />
+            {hasNote && !noteOpen && (
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full" style={{ background: "#7c6af7" }} />
+            )}
+          </button>
           {desc && (
             <button
               onClick={() => setOpen(!open)}
@@ -560,6 +603,30 @@ function CheckRow({
           )}
         </div>
       </div>
+
+      {/* Note panel */}
+      {noteOpen && (
+        <div className="px-5 pb-3 pt-1 bg-[#0f0f18] border-t border-[#1a1a26] animate-fade-in">
+          <textarea
+            className="w-full text-xs rounded-lg px-3 py-2 resize-none outline-none transition-all duration-150"
+            style={{
+              background: "#141420",
+              border: "1px solid #252535",
+              color: "#c0c0d0",
+              minHeight: "72px",
+              lineHeight: "1.6",
+            }}
+            placeholder="Sua anotação pessoal... (salva automaticamente)"
+            value={note}
+            onChange={(e) => onNoteChange(e.target.value)}
+            onFocus={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#7c6af760"; }}
+            onBlur={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#252535"; }}
+          />
+          {hasNote && (
+            <p className="text-[9px] text-[#7c6af780] mt-1">✓ salvo</p>
+          )}
+        </div>
+      )}
 
       {/* Description panel */}
       {open && desc && (
