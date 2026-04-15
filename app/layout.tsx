@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { PathProvider } from "@/components/PathSelector";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { I18nProvider } from "@/components/I18nProvider";
 
 export const metadata: Metadata = {
   title: "Dev Roadmap — Python & TypeScript",
@@ -25,11 +26,14 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="bg-[#0a0a0a] text-[#e5e5e5] min-h-full antialiased">
-        <ThemeProvider>
-          <PathProvider>
-            {children}
-          </PathProvider>
-        </ThemeProvider>
+        <a href="#main-content" className="skip-to-content">Ir para o conteúdo</a>
+        <I18nProvider>
+          <ThemeProvider>
+            <PathProvider>
+              {children}
+            </PathProvider>
+          </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

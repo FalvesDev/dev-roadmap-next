@@ -31,7 +31,12 @@ import { GlossarySection } from "@/components/GlossarySection";
 import { WeeklyGoal } from "@/components/WeeklyGoal";
 import { AchievementsPanel, AchievementsBadge } from "@/components/AchievementsPanel";
 import { BackupRestore } from "@/components/BackupRestore";
-import { Brain, Share2, PenLine, Timer, DatabaseBackup } from "lucide-react";
+import { QuizModal } from "@/components/QuizModal";
+import { ActivityTimeline } from "@/components/ActivityTimeline";
+import { ShareProfile } from "@/components/ShareProfile";
+import { Certificate } from "@/components/Certificate";
+import { LocaleToggle, useI18n } from "@/components/I18nProvider";
+import { Brain, Share2, PenLine, Timer, DatabaseBackup, GraduationCap, CalendarDays, Award, HelpCircle } from "lucide-react";
 
 function Divider({ label }: { label: string }) {
   return (
@@ -46,12 +51,18 @@ function Divider({ label }: { label: string }) {
 }
 
 export default function Home() {
+  const { t } = useI18n();
+
   const [showFlashcards,   setShowFlashcards]   = useState(false);
   const [showExport,       setShowExport]       = useState(false);
   const [showNotes,        setShowNotes]        = useState(false);
   const [showPomodoro,     setShowPomodoro]     = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showBackup,       setShowBackup]       = useState(false);
+  const [showQuiz,         setShowQuiz]         = useState(false);
+  const [showActivity,     setShowActivity]     = useState(false);
+  const [showShare,        setShowShare]        = useState(false);
+  const [showCertificate,  setShowCertificate]  = useState(false);
 
   return (
     <div className="flex min-h-screen bg-[#0d0d12]">
@@ -69,39 +80,64 @@ export default function Home() {
       {showPomodoro     && <PomodoroTimer     onClose={() => setShowPomodoro(false)} />}
       {showAchievements && <AchievementsPanel onClose={() => setShowAchievements(false)} />}
       {showBackup       && <BackupRestore     onClose={() => setShowBackup(false)} />}
+      {showQuiz         && <QuizModal         onClose={() => setShowQuiz(false)} />}
+      {showActivity     && <ActivityTimeline  onClose={() => setShowActivity(false)} />}
+      {showShare        && <ShareProfile      onClose={() => setShowShare(false)} />}
+      {showCertificate  && <Certificate       onClose={() => setShowCertificate(false)} />}
 
-      <main className="flex-1 lg:ml-52 px-5 md:px-10 py-10 max-w-5xl mx-auto w-full">
+      <main id="main-content" className="flex-1 lg:ml-52 px-5 md:px-10 py-10 max-w-5xl mx-auto w-full">
 
         {/* ── HERO ── */}
         <section id="overview" className="border border-[#222230] rounded-2xl p-8 md:p-10 mb-10 bg-[#13131a] animate-fade-in-up" style={{ boxShadow: "0 4px 32px rgba(109,94,245,0.06), 0 1px 0 #2a2a38 inset" }}>
           <div className="flex flex-col md:flex-row md:items-start gap-8">
             <div className="flex-1">
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#909098] mb-4">
-                Roadmap 2025 · Python & TypeScript
+                {t("heroTag")}
               </p>
               <h1 className="text-2xl md:text-3xl font-bold text-[#ededf4] mb-3 leading-tight tracking-tight">
-                Do zero ao dev júnior<br />
-                <span className="text-[#7c6af7]">em 9 meses.</span>
+                {t("heroTitle1")}<br />
+                <span className="text-[#7c6af7]">{t("heroTitle2")}</span>
               </h1>
               <p className="text-sm text-[#a0a0b0] max-w-md leading-relaxed mb-5">
-                Módulos semana a semana, checklist interativo com explicações completas,
-                110+ recursos curados e trilha de carreira. Tudo que precisa, na ordem certa.
+                {t("heroDesc")}
               </p>
 
               <HeroCTA />
 
-              {/* Quick actions */}
-              <div className="flex flex-wrap gap-2 mb-4">
+              {/* Quick actions row 1 */}
+              <div className="flex flex-wrap gap-2 mb-2">
                 {[
-                  { label: "Revisão rápida",    icon: Brain,         onClick: () => setShowFlashcards(true) },
-                  { label: "Pomodoro",           icon: Timer,         onClick: () => setShowPomodoro(true) },
-                  { label: "Minhas notas",       icon: PenLine,       onClick: () => setShowNotes(true) },
-                  { label: "Exportar imagem",    icon: Share2,        onClick: () => setShowExport(true) },
-                  { label: "Backup / Restore",   icon: DatabaseBackup, onClick: () => setShowBackup(true) },
+                  { label: t("actionFlashcard"),  icon: Brain,         onClick: () => setShowFlashcards(true) },
+                  { label: t("actionPomodoro"),    icon: Timer,         onClick: () => setShowPomodoro(true) },
+                  { label: t("actionQuiz"),        icon: HelpCircle,    onClick: () => setShowQuiz(true) },
+                  { label: t("actionNotes"),       icon: PenLine,       onClick: () => setShowNotes(true) },
+                  { label: t("actionActivity"),    icon: CalendarDays,  onClick: () => setShowActivity(true) },
                 ].map(({ label, icon: Icon, onClick }) => (
                   <button
                     key={label}
                     onClick={onClick}
+                    aria-label={label}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
+                    style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c0c0d8"; (e.currentTarget as HTMLElement).style.borderColor = "#7c6af740"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9090b0"; (e.currentTarget as HTMLElement).style.borderColor = "#252535"; }}
+                  >
+                    <Icon size={12} /> {label}
+                  </button>
+                ))}
+              </div>
+              {/* Quick actions row 2 */}
+              <div className="flex flex-wrap gap-2 mb-5">
+                {[
+                  { label: t("actionShare"),    icon: Share2,        onClick: () => setShowShare(true) },
+                  { label: t("actionExport"),   icon: GraduationCap, onClick: () => setShowExport(true) },
+                  { label: t("actionCert"),     icon: Award,         onClick: () => setShowCertificate(true) },
+                  { label: t("actionBackup"),   icon: DatabaseBackup, onClick: () => setShowBackup(true) },
+                ].map(({ label, icon: Icon, onClick }) => (
+                  <button
+                    key={label}
+                    onClick={onClick}
+                    aria-label={label}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
                     style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
                     onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c0c0d8"; (e.currentTarget as HTMLElement).style.borderColor = "#7c6af740"; }}
@@ -111,6 +147,7 @@ export default function Home() {
                   </button>
                 ))}
                 <AchievementsBadge onClick={() => setShowAchievements(true)} />
+                <LocaleToggle />
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -135,48 +172,46 @@ export default function Home() {
         </section>
 
         {/* ── MODULES ── */}
-        <Divider label="Módulos de aprendizado" />
+        <Divider label={t("divModules")} />
         <ModuleSection />
 
         {/* ── PROJECTS ── */}
-        <Divider label="Projetos guiados" />
+        <Divider label={t("divProjects")} />
         <ProjectsSection />
 
         {/* ── PROGRESS ── */}
-        <Divider label="Seu progresso" />
+        <Divider label={t("divProgress")} />
         <ProgressStats />
         <ProgressCharts />
 
         {/* ── ARCHITECTURE ── */}
-        <Divider label="Arquitetura, redes & lógica" />
+        <Divider label={t("divArch")} />
         <ArchitectureSection />
 
         {/* ── MATERIALS ── */}
-        <Divider label="Materiais de estudo" />
+        <Divider label={t("divMaterials")} />
         <ArticlesSection />
         <ResourceGrid />
 
         {/* ── GLOSSARY ── */}
-        <Divider label="Glossário técnico" />
+        <Divider label={t("divGlossary")} />
         <GlossarySection />
 
         {/* ── INTERVIEW PREP ── */}
-        <Divider label="Prep para entrevista" />
+        <Divider label={t("divInterview")} />
         <InterviewSection />
 
         {/* ── CAREER ── */}
-        <Divider label="Mercado de trabalho" />
+        <Divider label={t("divCareer")} />
         <CareerSection />
 
         {/* ── TIPS ── */}
-        <Divider label="Dicas e referência" />
+        <Divider label={t("divTips")} />
         <TipsSection />
 
         {/* Footer */}
-        <footer className="border-t border-[#1a1a22] pt-6 mt-8 text-center">
-          <p className="text-xs text-[#303038]">
-            Dev Roadmap · Python 3.12 · TypeScript 5 · Node 20 · 2025
-          </p>
+        <footer className="border-t border-[#1a1a22] pt-6 mt-8 text-center" role="contentinfo">
+          <p className="text-xs text-[#303038]">{t("footer")}</p>
         </footer>
       </main>
     </div>

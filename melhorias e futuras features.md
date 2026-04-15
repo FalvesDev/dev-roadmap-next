@@ -6,33 +6,33 @@ Ideias levantadas ao longo do desenvolvimento para elevar o projeto de roadmap p
 
 ## Conteúdo & Aprendizado
 
-- [x] **Timer Pomodoro** — sessão de foco 25/5 min com ring SVG animado, beep no fim, integrado ao streak e stats
-- [x] **Glossário interativo** — 45+ termos técnicos (Python, TS, SQL, HTTP/REST, Git, Geral) com busca, filtro por categoria e card expandível com exemplo de código
-- [ ] **Quiz por módulo** — questões de múltipla escolha ao final de cada fase, desbloqueadas após completar 80% do checklist da fase
-- [ ] **Seção de Arquitetura de Computadores** — CPU, memória, SO, redes em cards separados por tema
+- [x] **Timer Pomodoro** — sessão de foco 25/5 min com ring SVG animado, beep via WebAudio, integrado ao streak
+- [x] **Glossário interativo** — 45+ termos (Python, TS, SQL, HTTP, Git, Geral) com busca, filtro e exemplos de código
+- [x] **Quiz por módulo** — 30 questões de múltipla escolha em 5 fases, desbloqueadas ao atingir 80% de cada fase
+- [x] **Seção de Arquitetura de Computadores** — CPU, memória, processos, SO, I/O e "números que todo dev deve saber"
 
 ---
 
 ## Personalização
 
-- [x] **Meta semanal configurável** — usuário define X horas/semana, dots diários de progresso e barra de conclusão, integrada ao streak e Pomodoro
-- [x] **Importar/exportar progresso como JSON** — backup e restore completo do localStorage com confirmação antes de sobrescrever
+- [x] **Meta semanal configurável** — X horas/semana, dots diários, barra de progresso, celebra ao atingir
+- [x] **Importar/exportar progresso como JSON** — backup/restore completo do localStorage com confirmação
 
 ---
 
 ## Engajamento
 
-- [ ] **Histórico de atividade detalhado** — linha do tempo "o que estudei esta semana" estilo GitHub contributions, expandindo o heatmap atual
-- [x] **Conquistas (badges)** — 16 badges desbloqueáveis por marcos: streaks, % do roadmap, fases concluídas, pomodoros, notas, projetos
-- [ ] **Compartilhamento de perfil** — URL com query params encodando o progresso para mostrar a amigos ou recrutadores
-- [ ] **Certificado de conclusão** — PDF/imagem gerado ao atingir 100%, com nome do usuário, data e assinatura visual do roadmap
+- [x] **Histórico de atividade** — calendário mensal navegável + heatmap de 52 semanas estilo GitHub
+- [x] **Conquistas (badges)** — 16 badges desbloqueáveis (streaks, % roadmap, fases, pomodoros, notas, projetos)
+- [x] **Compartilhamento de perfil** — URL com query params do progresso + botões Twitter/LinkedIn
+- [x] **Certificado de conclusão** — Canvas 900×636px gerado localmente ao atingir 100%, download PNG
 
 ---
 
 ## Qualidade & Acessibilidade
 
-- [ ] **i18n básico (EN / PT-BR)** — toggle de idioma, útil para usar o roadmap como referência em inglês ou compartilhar internacionalmente
-- [ ] **Acessibilidade** — `aria-label` em todos os botões interativos, foco visível por teclado, suporte a `prefers-reduced-motion`
+- [x] **i18n PT-BR / EN** — contexto I18nProvider com toggle 🌐 no hero e na sidebar, strings de UI traduzidas
+- [x] **Acessibilidade** — `focus-visible` global, `skip-to-content`, `aria-label` em botões, `prefers-reduced-motion`
 
 ---
 
