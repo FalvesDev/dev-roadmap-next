@@ -46,13 +46,15 @@ import {
   Flame, Target,
 } from "lucide-react";
 
-/* ── Section divider — retro style ─────────── */
+/* ── Section divider — gradient fade style ─── */
 function Divider({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3 my-10">
-      <span className="mono-label" style={{ color: "#7c3aed" }}>//</span>
-      <span className="mono-label" style={{ color: "#505065" }}>{label}</span>
-      <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.04)" }} />
+    <div className="flex items-center gap-4 my-12">
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#7c3aed", boxShadow: "0 0 6px #7c3aed80" }} />
+        <span className="section-eyebrow">{label}</span>
+      </div>
+      <div className="flex-1 divider-line" />
     </div>
   );
 }
@@ -168,24 +170,29 @@ export default function Home() {
       <main id="main-content" className="flex-1 lg:ml-52 w-full pb-16 lg:pb-0">
 
         {/* ════════════════════════════════════════
-            HERO — Dev Retro
+            HERO — Axiom
         ════════════════════════════════════════ */}
-        <section id="overview" className="relative overflow-hidden" style={{ background: "#080812" }}>
+        <section id="overview" className="relative overflow-hidden" style={{ background: "#060610" }}>
 
           {/* Accent bar top */}
           <div className="accent-bar" />
 
-          {/* Dot grid overlay */}
-          <div className="dot-grid absolute inset-0 pointer-events-none" />
+          {/* Grid lines (Linear-style) */}
+          <div className="grid-lines absolute inset-0 pointer-events-none" />
 
-          {/* Radial purple bloom */}
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 60% 50% at 70% 40%, rgba(124,58,237,0.07) 0%, transparent 70%)" }} />
+          {/* Multi-layer gradient atmosphere */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: `
+              radial-gradient(ellipse 70% 60% at 15% 40%, rgba(124,58,237,0.11) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 40% at 85% 65%, rgba(245,158,11,0.05) 0%, transparent 60%),
+              radial-gradient(ellipse 35% 55% at 65% 10%, rgba(59,130,246,0.06) 0%, transparent 60%)
+            `
+          }} />
 
-          <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-14 md:py-16">
+          <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-14 md:py-20">
 
-            {/* ── Terminal label ── */}
-            <div className="flex items-center gap-3 mb-6">
+            {/* ── Terminal breadcrumb ── */}
+            <div className="flex items-center gap-3 mb-10">
               <span className="mono-label" style={{ color: "#f59e0b" }}>
                 $ dev-roadmap --year 2025
               </span>
@@ -196,33 +203,32 @@ export default function Home() {
               </span>
             </div>
 
-            {/* ── Headline ── */}
-            <h1 className="font-black leading-none tracking-tight mb-2"
-              style={{ fontSize: "clamp(2.2rem, 5vw, 3.5rem)", color: "#f0f0f8" }}>
-              Do zero ao{" "}
-              <span style={{
-                background: "linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}>
+            {/* ── Headline — dramatic ── */}
+            <div className="mb-8">
+              <p className="font-normal mb-1" style={{ fontSize: "clamp(0.95rem, 2vw, 1.2rem)", color: "#404058", letterSpacing: "0.02em" }}>
+                Do zero ao
+              </p>
+              <h1 className="font-black leading-[0.9] tracking-tight text-gradient-purple"
+                style={{ fontSize: "clamp(3.8rem, 10vw, 7rem)" }}>
                 dev júnior
-              </span>
-            </h1>
-            <p className="font-semibold mb-6" style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.6rem)", color: "#505065" }}>
-              em 9 meses. <span style={{ color: "#f59e0b" }}>⚡</span>
-            </p>
+              </h1>
+              <p className="font-medium mt-3" style={{ fontSize: "clamp(1rem, 2.2vw, 1.35rem)", color: "#505065" }}>
+                em 9 meses — do básico ao deploy.{" "}
+                <span style={{ color: "#f59e0b" }}>⚡</span>
+              </p>
+            </div>
 
-            {/* ── Stats strip ── */}
-            <div className="flex flex-wrap gap-6 mb-8">
+            {/* ── Stats — glass cards ── */}
+            <div className="flex flex-wrap gap-3 mb-9">
               {[
-                { n: "95",   l: "módulos" },
-                { n: "5",    l: "fases" },
-                { n: "100%", l: "gratuito" },
-                { n: "∞",    l: "conteúdo" },
-              ].map(({ n, l }) => (
-                <div key={l}>
-                  <p className="text-2xl font-black" style={{ color: "#f0f0f8", lineHeight: 1 }}>{n}</p>
-                  <p className="mono-label mt-1" style={{ color: "#505065" }}>{l}</p>
+                { n: "95",   l: "módulos",     color: "#7c3aed" },
+                { n: "5",    l: "fases",       color: "#3b82f6" },
+                { n: "100%", l: "gratuito",    color: "#10b981" },
+                { n: "∞",    l: "conteúdo",    color: "#f59e0b" },
+              ].map(({ n, l, color }) => (
+                <div key={l} className="stat-card rounded-xl px-4 py-3" style={{ minWidth: "84px" }}>
+                  <p className="text-[1.6rem] font-black leading-none tabular-nums" style={{ color }}>{n}</p>
+                  <p className="mono-label mt-1.5" style={{ color: "#404060" }}>{l}</p>
                 </div>
               ))}
             </div>
@@ -235,20 +241,16 @@ export default function Home() {
 
             {/* ── Widget cards ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <div data-tour="daily-challenge">
-                <DailyChallenge />
-              </div>
-              <div data-tour="next-step">
-                <NextStepWidget />
-              </div>
+              <div data-tour="daily-challenge"><DailyChallenge /></div>
+              <div data-tour="next-step"><NextStepWidget /></div>
             </div>
 
             {/* ── Tools ── */}
             <div data-tour="quick-actions">
               <div className="flex items-center gap-3 mb-3">
                 <span className="mono-label" style={{ color: "#7c3aed" }}>&gt;_</span>
-                <span className="mono-label" style={{ color: "#505065" }}>ferramentas</span>
-                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.04)" }} />
+                <span className="mono-label" style={{ color: "#404060" }}>ferramentas</span>
+                <div className="flex-1 divider-line" />
               </div>
               <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1">
                 <ToolBtn label="Flashcards"   icon={Brain}          onClick={() => setShowFlashcards(true)} />

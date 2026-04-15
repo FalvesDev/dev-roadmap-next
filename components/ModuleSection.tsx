@@ -233,47 +233,83 @@ export function ModuleSection() {
 
   return (
     <section id="checklist" className="mb-16">
-      <div className="mb-6 animate-fade-in-up">
-        <h2 className="text-xl font-semibold text-[#ececf0] mb-1">Módulos de aprendizado</h2>
-        <p className="text-sm text-[#8f8f9a] leading-relaxed">
-          Cada módulo tem um objetivo claro, checklist de tópicos e recursos selecionados.
-          Clique nos itens para ler as explicações. Marque ao concluir.
+      <div className="mb-7 animate-fade-in-up">
+        <h2 className="font-black leading-none mb-2" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", color: "#f0f0f8" }}>
+          Módulos de aprendizado
+        </h2>
+        <p className="text-sm leading-relaxed max-w-xl">
+          <span style={{ color: "#606080" }}>Cada módulo: objetivo claro, checklist e recursos. </span>
+          <span style={{ color: "#404058" }}>Clique nos itens para ver explicações detalhadas.</span>
         </p>
       </div>
 
-      {/* Phase tabs */}
-      <div className="flex gap-1.5 mb-8 flex-wrap animate-fade-in-up stagger-1">
+      {/* Phase tabs — visual with mini progress bars */}
+      <div className="flex gap-2 mb-8 overflow-x-auto scrollbar-none -mx-1 px-1 pb-1 animate-fade-in-up stagger-1">
         {phases.map((p, i) => {
           const items = p.cards.flatMap((c) => c.items);
           const done = items.filter((it) => checks[it.id]).length;
           const pct = items.length > 0 ? Math.round((done / items.length) * 100) : 0;
           const color = PHASE_COLORS[i];
           const isActive = activePhase === i;
+          const isComplete = pct === 100;
           return (
             <button
               key={p.id}
               onClick={() => setActivePhase(i)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium border transition-all duration-200 ${
-                isActive
-                  ? "border-[#2e2e3c] bg-[#1e1e2c] text-[#ececf0]"
-                  : "border-[#1e1e24] bg-transparent text-[#909098] hover:text-[#a8a8b8] hover:border-[#28282e] hover:bg-[#16161e]"
-              }`}
-              style={isActive ? { boxShadow: `0 0 0 1px ${color}22, 0 4px 12px ${color}10` } : {}}
+              className="flex-shrink-0 flex flex-col gap-2 px-4 py-3 rounded-xl transition-all duration-200"
+              style={{
+                background: isActive ? `${color}12` : "transparent",
+                border: `1px solid ${isActive ? `${color}35` : "rgba(255,255,255,0.06)"}`,
+                boxShadow: isActive ? `0 0 0 1px ${color}15, 0 4px 16px rgba(0,0,0,0.3)` : "none",
+                minWidth: "130px",
+              }}
+              onMouseEnter={e => {
+                if (!isActive) {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "rgba(255,255,255,0.1)";
+                  el.style.background = "rgba(255,255,255,0.025)";
+                }
+              }}
+              onMouseLeave={e => {
+                if (!isActive) {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "rgba(255,255,255,0.06)";
+                  el.style.background = "transparent";
+                }
+              }}
             >
-              <span
-                className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-200"
-                style={{ background: isActive ? color : "#383840", boxShadow: isActive ? `0 0 6px ${color}` : "none" }}
-              />
-              <span className="hidden sm:inline">{clean(p.title)}</span>
-              <span className="sm:hidden">F{i + 1}</span>
-              {pct > 0 && (
-                <span
-                  className="text-[9px] font-semibold tabular-nums"
-                  style={{ color: isActive ? color : "#484850" }}
-                >
+              {/* Phase name row */}
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200"
+                  style={{
+                    background: isComplete ? "#22c55e" : isActive ? color : "#2a2a38",
+                    boxShadow: isActive ? `0 0 8px ${color}` : "none",
+                  }}
+                />
+                <span className="text-xs font-bold truncate" style={{ color: isActive ? "#f0f0f8" : "#606070" }}>
+                  <span className="hidden sm:inline">{clean(p.title)}</span>
+                  <span className="sm:hidden">Fase {i + 1}</span>
+                </span>
+              </div>
+              {/* Mini progress bar */}
+              <div className="pl-4 flex items-center gap-2">
+                <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  {pct > 0 && (
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: `${pct}%`,
+                        background: isComplete ? "#22c55e" : color,
+                        boxShadow: `0 0 4px ${isComplete ? "#22c55e" : color}`,
+                      }}
+                    />
+                  )}
+                </div>
+                <span className="mono-label flex-shrink-0" style={{ color: isActive ? color : "#404050" }}>
                   {pct}%
                 </span>
-              )}
+              </div>
             </button>
           );
         })}
@@ -395,23 +431,24 @@ function ModuleCard({
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
-  const borderColor = isComplete ? "#1e2e24" : "#222228";
-  const bgColor = isComplete ? "#121a15" : "#16161e";
+  const leftBorderColor = isComplete ? "#22c55e" : inProgress ? phaseColor : "#252535";
 
   return (
     <div
-      className="rounded-xl border overflow-hidden card-hover animate-fade-in-up"
+      className="rounded-xl overflow-hidden phase-accent-card animate-fade-in-up"
       style={{
-        borderColor,
-        background: bgColor,
+        borderLeft: `3px solid ${leftBorderColor}`,
+        background: isComplete
+          ? "linear-gradient(135deg, rgba(34,197,94,0.06) 0%, #0c1410 100%)"
+          : `linear-gradient(135deg, ${phaseColor}06 0%, #0d0d1c 100%)`,
         animationDelay: `${animDelay}s`,
       }}
     >
       {/* Module header */}
       <button
-        className="w-full flex items-start gap-4 px-5 py-4 text-left transition-colors duration-150"
+        className="w-full flex items-start gap-4 px-5 py-4 text-left transition-all duration-150"
         style={{ background: "transparent" }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#1a1a24"; }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)"; }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
         onClick={() => setOpen(!open)}
       >
@@ -468,16 +505,16 @@ function ModuleCard({
       </button>
 
       {/* Progress bar */}
-      <div className="h-[2px] bg-[#1e1e26]">
+      <div className="h-[3px]" style={{ background: "rgba(255,255,255,0.04)" }}>
         {cardPct > 0 && (
           <div
             className="h-full transition-all duration-700 ease-out"
             style={{
               width: `${cardPct}%`,
               background: isComplete
-                ? "#16a34a"
-                : `linear-gradient(90deg, ${phaseColor}, ${phaseColor}cc)`,
-              boxShadow: isComplete ? "0 0 6px #16a34a60" : `0 0 6px ${phaseColor}60`,
+                ? "linear-gradient(90deg, #22c55e, #16a34a)"
+                : `linear-gradient(90deg, ${phaseColor}bb, ${phaseColor})`,
+              boxShadow: isComplete ? "0 0 8px #22c55e60" : `0 0 8px ${phaseColor}60`,
             }}
           />
         )}
