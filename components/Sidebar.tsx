@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, BarChart2, BookOpen,
   Newspaper, Link2, TrendingUp, Lightbulb,
-  Layers, MessageSquare,
+  Layers, MessageSquare, FolderGit2,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeProvider";
 
 const navSections = [
   {
@@ -19,6 +20,7 @@ const navSections = [
     label: "Aprender",
     items: [
       { href: "#checklist",    label: "Módulos",            icon: BookOpen },
+      { href: "#projetos",     label: "Projetos guiados",   icon: FolderGit2 },
       { href: "#arquitetura",  label: "Arquitetura & Redes", icon: Layers },
     ],
   },
@@ -125,8 +127,9 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="px-4 py-3" style={{ borderTop: "1px solid #20202e" }}>
-        <p className="text-[9px]" style={{ color: "#484860" }}>v2.0 · 2025</p>
+      <div className="px-3 py-3" style={{ borderTop: "1px solid #20202e" }}>
+        <ThemeToggle />
+        <p className="text-[9px] px-2 mt-2" style={{ color: "#484860" }}>v2.0 · 2025</p>
       </div>
     </aside>
   );

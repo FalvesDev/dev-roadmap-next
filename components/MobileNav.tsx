@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, BarChart2, BookOpen,
   Newspaper, Link2, TrendingUp, Lightbulb,
-  Layers, Menu, X, MessageSquare,
+  Layers, Menu, X, MessageSquare, FolderGit2,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeProvider";
 
 const navSections = [
   {
@@ -19,6 +20,7 @@ const navSections = [
     label: "Aprender",
     items: [
       { href: "#checklist",   label: "Módulos",           icon: BookOpen },
+      { href: "#projetos",    label: "Projetos guiados",  icon: FolderGit2 },
       { href: "#arquitetura", label: "Arquitetura & Redes", icon: Layers },
     ],
   },
@@ -70,15 +72,17 @@ export function MobileNav() {
           <span className="text-sm font-semibold text-[#eeeef6] tracking-tight">Dev Roadmap</span>
         </div>
 
-        {/* Hamburger */}
-        <button
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Fechar menu" : "Abrir menu"}
-          className="p-1.5 rounded-md"
-          style={{ color: "#9090b0" }}
-        >
-          {open ? <X size={18} /> : <Menu size={18} />}
-        </button>
+        <div className="flex items-center gap-1">
+          <ThemeToggle compact />
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Fechar menu" : "Abrir menu"}
+            className="p-1.5 rounded-md"
+            style={{ color: "#9090b0" }}
+          >
+            {open ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
       </header>
 
       {/* Dropdown menu */}

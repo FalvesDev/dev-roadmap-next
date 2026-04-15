@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { StickyProgress } from "@/components/StickyProgress";
 import { ProgressStats } from "@/components/ProgressStats";
@@ -15,6 +18,10 @@ import { HeroCTA } from "@/components/HeroCTA";
 import { PathSelector } from "@/components/PathSelector";
 import { StreakTracker } from "@/components/StreakTracker";
 import { InterviewSection } from "@/components/InterviewSection";
+import { ProjectsSection } from "@/components/ProjectsSection";
+import { FlashcardMode } from "@/components/FlashcardMode";
+import { ExportProgress } from "@/components/ExportProgress";
+import { Brain, Share2 } from "lucide-react";
 
 function Divider({ label }: { label: string }) {
   return (
@@ -29,12 +36,18 @@ function Divider({ label }: { label: string }) {
 }
 
 export default function Home() {
+  const [showFlashcards, setShowFlashcards] = useState(false);
+  const [showExport, setShowExport] = useState(false);
+
   return (
     <div className="flex min-h-screen bg-[#0d0d12]">
       <Sidebar />
       <MobileNav />
       <StickyProgress />
       <GlobalSearch />
+
+      {showFlashcards && <FlashcardMode onClose={() => setShowFlashcards(false)} />}
+      {showExport && <ExportProgress onClose={() => setShowExport(false)} />}
 
       <main className="flex-1 lg:ml-52 px-5 md:px-10 py-10 max-w-5xl mx-auto w-full">
 
@@ -54,8 +67,29 @@ export default function Home() {
                 110+ recursos curados e trilha de carreira. Tudo que precisa, na ordem certa.
               </p>
 
-              {/* ── CTA "por onde começar" ── */}
               <HeroCTA />
+
+              {/* Quick actions */}
+              <div className="flex flex-wrap gap-2 mb-5">
+                <button
+                  onClick={() => setShowFlashcards(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
+                  style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c0c0d8"; (e.currentTarget as HTMLElement).style.borderColor = "#7c6af740"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9090b0"; (e.currentTarget as HTMLElement).style.borderColor = "#252535"; }}
+                >
+                  <Brain size={12} /> Revisão rápida
+                </button>
+                <button
+                  onClick={() => setShowExport(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
+                  style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c0c0d8"; (e.currentTarget as HTMLElement).style.borderColor = "#7c6af740"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9090b0"; (e.currentTarget as HTMLElement).style.borderColor = "#252535"; }}
+                >
+                  <Share2 size={12} /> Exportar progresso
+                </button>
+              </div>
 
               <div className="flex flex-wrap gap-2">
                 {["Python", "TypeScript", "FastAPI", "React", "Docker", "PostgreSQL"].map((tag) => (
@@ -76,11 +110,15 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── MODULES (main content) — antes do progresso para o iniciante ver o roadmap primeiro ── */}
+        {/* ── MODULES ── */}
         <Divider label="Módulos de aprendizado" />
         <ModuleSection />
 
-        {/* ── PROGRESS — depois dos módulos, assim o progresso tem contexto ── */}
+        {/* ── PROJECTS ── */}
+        <Divider label="Projetos guiados" />
+        <ProjectsSection />
+
+        {/* ── PROGRESS ── */}
         <Divider label="Seu progresso" />
         <ProgressStats />
         <ProgressCharts />
