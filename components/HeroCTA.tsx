@@ -2,20 +2,19 @@
 
 export function HeroCTA() {
   return (
-    <div className="flex flex-wrap items-center gap-3 mb-6">
-      <a
-        href="#checklist"
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-150"
-        style={{ background: "#7c6af7", color: "#fff", boxShadow: "0 0 20px #7c6af730" }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#6d5ef5"; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#7c6af7"; }}
-      >
-        Começar pela Fase 1
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </a>
-      <span className="text-xs text-[#909098]">ou explore pelo sidebar →</span>
-    </div>
+    <a
+      href="#checklist"
+      className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors duration-150 shine-on-hover cta-glow"
+      style={{
+        background: "linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #8b5cf6 100%)",
+        color: "#fff",
+        letterSpacing: "0.01em",
+      }}
+    >
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+        <path d="M3 7.5h9M7.5 3l4.5 4.5-4.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+      Começar pela Fase 1
+    </a>
   );
 }
