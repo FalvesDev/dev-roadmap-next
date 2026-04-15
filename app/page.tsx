@@ -37,6 +37,8 @@ import { ShareProfile } from "@/components/ShareProfile";
 import { Certificate } from "@/components/Certificate";
 import { DailyChallenge } from "@/components/DailyChallenge";
 import { KeyboardShortcuts, useKeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import { StudyReminder } from "@/components/StudyReminder";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import { LocaleToggle, useI18n } from "@/components/I18nProvider";
 import {
   Brain, Share2, PenLine, Timer, DatabaseBackup,
@@ -70,7 +72,6 @@ export default function Home() {
   const [showCertificate,  setShowCertificate]  = useState(false);
   const [showShortcuts,    setShowShortcuts]    = useState(false);
 
-  // Close any open modal
   const closeAll = useCallback(() => {
     setShowFlashcards(false); setShowExport(false); setShowNotes(false);
     setShowPomodoro(false); setShowAchievements(false); setShowBackup(false);
@@ -78,24 +79,19 @@ export default function Home() {
     setShowCertificate(false); setShowShortcuts(false);
   }, []);
 
-  // Global search trigger (opens GlobalSearch which listens to a custom event)
   const openSearch = useCallback(() => {
     document.dispatchEvent(new CustomEvent("open-search"));
   }, []);
 
   useKeyboardShortcuts({
-    onSearch:    openSearch,
-    onPomodoro:  () => setShowPomodoro(v => !v),
-    onFlashcards:() => setShowFlashcards(v => !v),
-    onNotes:     () => setShowNotes(v => !v),
-    onQuiz:      () => setShowQuiz(v => !v),
-    onShortcuts: () => setShowShortcuts(v => !v),
-    onClose:     closeAll,
+    onSearch:     openSearch,
+    onPomodoro:   () => setShowPomodoro(v => !v),
+    onFlashcards: () => setShowFlashcards(v => !v),
+    onNotes:      () => setShowNotes(v => !v),
+    onQuiz:       () => setShowQuiz(v => !v),
+    onShortcuts:  () => setShowShortcuts(v => !v),
+    onClose:      closeAll,
   });
-
-  const anyOpen = showFlashcards || showExport || showNotes || showPomodoro ||
-    showAchievements || showBackup || showQuiz || showActivity ||
-    showShare || showCertificate || showShortcuts;
 
   return (
     <div className="flex min-h-screen bg-[#0d0d12]">
@@ -124,8 +120,6 @@ export default function Home() {
         {/* ── HERO ── */}
         <section id="overview" className="relative border border-[#222230] rounded-2xl overflow-hidden mb-10 animate-fade-in-up"
           style={{ boxShadow: "0 4px 40px rgba(109,94,245,0.10)" }}>
-
-          {/* Background glow blobs */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-[0.06]"
               style={{ background: "radial-gradient(circle, #7c6af7, transparent)" }} />
@@ -140,7 +134,6 @@ export default function Home() {
                   <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#909098]">
                     {t("heroTag")}
                   </span>
-                  {/* Live indicator */}
                   <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
                     style={{ background: "#34d39915", color: "#34d399", border: "1px solid #34d39930" }}>
                     <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] glow-dot" />
@@ -167,8 +160,8 @@ export default function Home() {
 
                 <HeroCTA />
 
-                {/* Quick actions — row 1 */}
-                <div className="flex flex-wrap gap-2 mb-2">
+                {/* Quick actions row 1 */}
+                <div className="flex flex-wrap gap-2 mb-2" data-tour="quick-actions">
                   {[
                     { label: t("actionFlashcard"), icon: Brain,        onClick: () => setShowFlashcards(true) },
                     { label: t("actionPomodoro"),  icon: Timer,        onClick: () => setShowPomodoro(true) },
@@ -180,22 +173,23 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* Quick actions — row 2 */}
+                {/* Quick actions row 2 */}
                 <div className="flex flex-wrap gap-2 mb-5">
                   {[
-                    { label: t("actionShare"),   icon: Share2,         onClick: () => setShowShare(true) },
-                    { label: t("actionExport"),  icon: GraduationCap,  onClick: () => setShowExport(true) },
-                    { label: t("actionCert"),    icon: Award,          onClick: () => setShowCertificate(true) },
-                    { label: t("actionBackup"),  icon: DatabaseBackup, onClick: () => setShowBackup(true) },
+                    { label: t("actionShare"),  icon: Share2,         onClick: () => setShowShare(true) },
+                    { label: t("actionExport"), icon: GraduationCap,  onClick: () => setShowExport(true) },
+                    { label: t("actionCert"),   icon: Award,          onClick: () => setShowCertificate(true) },
+                    { label: t("actionBackup"), icon: DatabaseBackup, onClick: () => setShowBackup(true) },
                   ].map(({ label, icon: Icon, onClick }) => (
                     <ActionBtn key={label} label={label} icon={Icon} onClick={onClick} />
                   ))}
                   <AchievementsBadge onClick={() => setShowAchievements(true)} />
                   <ActionBtn label="Atalhos" icon={Keyboard} onClick={() => setShowShortcuts(true)} />
+                  <StudyReminder />
+                  <OnboardingTour />
                   <LocaleToggle />
                 </div>
 
-                {/* Tech tags */}
                 <div className="flex flex-wrap gap-2">
                   {["Python", "TypeScript", "FastAPI", "React", "Docker", "PostgreSQL"].map((tag) => (
                     <span key={tag}
@@ -209,11 +203,11 @@ export default function Home() {
               {/* Right column */}
               <div className="md:w-64 flex-shrink-0 space-y-3">
                 <SearchTrigger />
-                <DailyChallenge />
-                <NextStepWidget />
-                <WeeklyGoal />
+                <div data-tour="daily-challenge"><DailyChallenge /></div>
+                <div data-tour="next-step"><NextStepWidget /></div>
+                <div data-tour="weekly-goal"><WeeklyGoal /></div>
                 <PathSelector />
-                <StreakTracker />
+                <div data-tour="streak"><StreakTracker /></div>
               </div>
             </div>
           </div>
@@ -257,11 +251,12 @@ export default function Home() {
         <Divider label={t("divTips")} />
         <TipsSection />
 
-        {/* Footer */}
         <footer className="border-t border-[#1a1a22] pt-6 mt-8 text-center" role="contentinfo">
           <p className="text-xs text-[#303038]">{t("footer")}</p>
           <p className="text-[10px] text-[#252530] mt-1">
-            Pressione <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ background: "#1e1e2a", border: "1px solid #303040" }}>?</kbd> para ver os atalhos de teclado
+            Pressione <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ background: "#1e1e2a", border: "1px solid #303040" }}>?</kbd> para atalhos ·{" "}
+            <button onClick={() => document.dispatchEvent(new CustomEvent("start-tour"))}
+              className="underline hover:text-[#404050] transition-colors">Tour</button>
           </p>
         </footer>
       </main>
@@ -276,17 +271,13 @@ function ActionBtn({ label, icon: Icon, onClick }: { label: string; icon: React.
       aria-label={label}
       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
       style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
-      onMouseEnter={(e) => {
+      onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.color = "#c0c0d8";
-        el.style.borderColor = "#7c6af740";
-        el.style.background = "#1e1a30";
+        el.style.color = "#c0c0d8"; el.style.borderColor = "#7c6af740"; el.style.background = "#1e1a30";
       }}
-      onMouseLeave={(e) => {
+      onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.color = "#9090b0";
-        el.style.borderColor = "#252535";
-        el.style.background = "#1a1a28";
+        el.style.color = "#9090b0"; el.style.borderColor = "#252535"; el.style.background = "#1a1a28";
       }}
     >
       <Icon size={12} /> {label}
