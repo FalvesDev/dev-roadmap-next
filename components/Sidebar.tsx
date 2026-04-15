@@ -6,9 +6,9 @@ import {
   Newspaper, Link2, TrendingUp, Lightbulb,
   Layers, MessageSquare, FolderGit2,
 } from "lucide-react";
+import { Search } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { LocaleToggle } from "@/components/I18nProvider";
-import { SearchTrigger } from "@/components/SearchTrigger";
 
 const navSections = [
   {
@@ -77,9 +77,7 @@ export function Sidebar() {
           </div>
           <span className="text-sm font-semibold text-[#eeeef6] tracking-tight">Dev Roadmap</span>
         </div>
-        <p className="text-[10px] pl-7 mb-3" style={{ color: "#8080a0" }}>Python · TypeScript · 2025</p>
-        {/* Search bar in sidebar */}
-        <SearchTrigger />
+        <p className="text-[10px] pl-7" style={{ color: "#8080a0" }}>Python · TypeScript · 2025</p>
       </div>
 
       {/* Nav */}
@@ -137,6 +135,17 @@ export function Sidebar() {
         <div className="flex items-center gap-2 mb-2">
           <ThemeToggle />
           <LocaleToggle />
+          <button
+            onClick={() => document.dispatchEvent(new CustomEvent("open-search"))}
+            aria-label="Buscar (Ctrl K)"
+            title="Buscar (Ctrl K)"
+            className="p-1.5 rounded-md transition-colors"
+            style={{ color: "#606070" }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#9090b0"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "#606070"}
+          >
+            <Search size={13} />
+          </button>
         </div>
         <p className="text-[9px] px-2 mt-1" style={{ color: "#484860" }}>v3.0 · 2025</p>
       </div>

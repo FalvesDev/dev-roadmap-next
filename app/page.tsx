@@ -192,36 +192,34 @@ export default function Home() {
 
           <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10 pt-8 pb-6">
 
-            {/* ── Título + CTA ── */}
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mb-6">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-3 flex-wrap">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#505060]">
-                    {t("heroTag")}
-                  </span>
-                  <span
-                    className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
-                    style={{ background: "#34d39910", color: "#34d399", border: "1px solid #34d39925" }}
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] glow-dot" />
-                    Open Source
-                  </span>
-                </div>
-                <h1 className="text-2xl sm:text-[1.7rem] font-extrabold text-[#ededf4] leading-tight tracking-tight mb-2">
-                  {t("heroTitle1")}{" "}
-                  <span style={{
-                    background: "linear-gradient(135deg, #7c6af7 0%, #a78bfa 60%, #7c6af7 100%)",
-                    backgroundSize: "200% auto",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    animation: "shimmer 4s linear infinite",
-                  }}>
-                    {t("heroTitle2")}
-                  </span>
-                </h1>
-                <StatusBar />
+            {/* ── Título ── */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#505060]">
+                  {t("heroTag")}
+                </span>
+                <span
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                  style={{ background: "#34d39910", color: "#34d399", border: "1px solid #34d39925" }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] glow-dot" />
+                  Open Source
+                </span>
               </div>
-              <div className="flex-shrink-0">
+              <h1 className="text-2xl sm:text-[1.7rem] font-extrabold text-[#ededf4] leading-tight tracking-tight mb-3">
+                {t("heroTitle1")}{" "}
+                <span style={{
+                  background: "linear-gradient(135deg, #7c6af7 0%, #a78bfa 60%, #7c6af7 100%)",
+                  backgroundSize: "200% auto",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  animation: "shimmer 4s linear infinite",
+                }}>
+                  {t("heroTitle2")}
+                </span>
+              </h1>
+              <div className="flex flex-wrap items-center gap-4">
+                <StatusBar />
                 <HeroCTA />
               </div>
             </div>
