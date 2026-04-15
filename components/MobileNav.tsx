@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, BarChart2, BookOpen,
   Newspaper, Link2, TrendingUp, Lightbulb,
-  Layers, Menu, X,
+  Layers, Menu, X, MessageSquare,
 } from "lucide-react";
 
 const navSections = [
@@ -32,6 +32,7 @@ const navSections = [
   {
     label: "Carreira",
     items: [
+      { href: "#entrevista",  label: "Prep entrevista",     icon: MessageSquare },
       { href: "#mercado",     label: "Mercado de trabalho", icon: TrendingUp },
       { href: "#dicas",       label: "Dicas & Referência",  icon: Lightbulb },
     ],
