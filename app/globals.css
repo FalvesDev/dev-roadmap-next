@@ -247,6 +247,15 @@ textarea:focus-visible {
   top: 8px;
 }
 
+/* ── Mobile utilities ── */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── prefers-reduced-motion ── */
 @media (prefers-reduced-motion: reduce) {
   *,

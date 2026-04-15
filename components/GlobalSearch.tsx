@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { phases } from "@/lib/roadmap-data";
 import { articles } from "@/lib/articles-data";
 import { resourceCards } from "@/lib/roadmap-data";
+import { X, Search } from "lucide-react";
 
 interface SearchResult {
   id: string;
@@ -17,7 +18,6 @@ interface SearchResult {
 function buildIndex(): SearchResult[] {
   const results: SearchResult[] = [];
 
-  // Checklist items
   for (const phase of phases) {
     for (const card of phase.cards) {
       for (const item of card.items) {
@@ -32,7 +32,6 @@ function buildIndex(): SearchResult[] {
     }
   }
 
-  // Articles
   for (const a of articles) {
     results.push({
       id: `art-${a.id}`,
@@ -43,7 +42,6 @@ function buildIndex(): SearchResult[] {
     });
   }
 
-  // Resources
   for (const card of resourceCards) {
     for (const item of card.items) {
       if (item.href) {
@@ -80,69 +78,77 @@ export function GlobalSearch() {
       .slice(0, 8);
   }, [query, index]);
 
-  // Keyboard shortcut ⌘K / Ctrl+K
+  const openSearch = () => {
+    setOpen(true);
+    setTimeout(() => inputRef.current?.focus(), 50);
+  };
+
+  const closeSearch = () => {
+    setOpen(false);
+    setQuery("");
+  };
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
+    const keyHandler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setOpen(true);
-        setTimeout(() => inputRef.current?.focus(), 50);
+        openSearch();
       }
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") closeSearch();
     };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    const eventHandler = () => openSearch();
+
+    window.addEventListener("keydown", keyHandler);
+    document.addEventListener("open-search", eventHandler as EventListener);
+    return () => {
+      window.removeEventListener("keydown", keyHandler);
+      document.removeEventListener("open-search", eventHandler as EventListener);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!open) {
-    return (
-      <button
-        onClick={() => { setOpen(true); setTimeout(() => inputRef.current?.focus(), 50); }}
-        className="flex items-center gap-2.5 px-3 py-2 bg-[#1a1a1a] border border-[#2e2e2e] rounded-lg text-sm text-[#666] hover:border-[#444] hover:text-[#aaa] transition-colors w-full max-w-xs"
-      >
-        <span>🔍</span>
-        <span className="flex-1 text-left">Buscar tópico ou recurso...</span>
-        <kbd className="text-[10px] bg-[#222] border border-[#333] px-1.5 py-0.5 rounded text-[#555]">
-          Ctrl K
-        </kbd>
-      </button>
-    );
-  }
+  if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[15vh] px-4">
+    <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[12vh] px-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={() => { setOpen(false); setQuery(""); }}
+        className="absolute inset-0"
+        style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+        onClick={closeSearch}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg bg-[#111] border border-[#2e2e2e] rounded-2xl shadow-2xl overflow-hidden">
+      <div
+        className="relative w-full max-w-lg rounded-2xl overflow-hidden animate-scale-in"
+        style={{ background: "#13131a", border: "1px solid #2a2a3a", boxShadow: "0 24px 64px rgba(0,0,0,0.7)" }}
+      >
         {/* Input */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#2e2e2e]">
-          <span className="text-[#555] text-lg">🔍</span>
+        <div className="flex items-center gap-3 px-4 py-3.5" style={{ borderBottom: "1px solid #1e1e2a" }}>
+          <Search size={15} style={{ color: "#606070", flexShrink: 0 }} />
           <input
             ref={inputRef}
             type="text"
             placeholder="Buscar tópico, artigo ou ferramenta..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-white placeholder-[#555] focus:outline-none"
+            className="flex-1 bg-transparent text-sm focus:outline-none"
+            style={{ color: "#ededf4" }}
           />
-          <kbd
-            onClick={() => { setOpen(false); setQuery(""); }}
-            className="text-[10px] bg-[#222] border border-[#333] px-1.5 py-0.5 rounded text-[#666] cursor-pointer hover:text-white transition-colors"
+          <button
+            onClick={closeSearch}
+            className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] transition-colors"
+            style={{ background: "#1e1e2a", border: "1px solid #2a2a38", color: "#606070" }}
           >
-            ESC
-          </kbd>
+            <X size={10} /> ESC
+          </button>
         </div>
 
         {/* Results */}
-        {query && (
-          <div className="max-h-80 overflow-y-auto">
+        {query ? (
+          <div className="max-h-72 overflow-y-auto">
             {results.length === 0 ? (
-              <div className="px-4 py-8 text-center text-[#555] text-sm">
+              <div className="px-4 py-10 text-center text-sm" style={{ color: "#606070" }}>
                 Nenhum resultado para &quot;{query}&quot;
               </div>
             ) : (
@@ -153,19 +159,22 @@ export function GlobalSearch() {
                     href={r.href ?? r.section ?? "#"}
                     target={r.href ? "_blank" : undefined}
                     rel={r.href ? "noopener noreferrer" : undefined}
-                    onClick={() => { setOpen(false); setQuery(""); }}
-                    className="flex items-start gap-3 px-4 py-3 hover:bg-[#1a1a1a] transition-colors cursor-pointer group"
+                    onClick={closeSearch}
+                    className="flex items-start gap-3 px-4 py-3 transition-colors group"
+                    style={{ borderBottom: "1px solid #1a1a22" }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#1a1a26"}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
                   >
-                    <span className="text-base mt-0.5 flex-shrink-0">
+                    <span className="text-sm mt-0.5 flex-shrink-0" style={{ color: r.href ? "#7c6af7" : "#606070" }}>
                       {r.href ? "↗" : "→"}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-white group-hover:text-violet-300 transition-colors truncate font-medium">
+                      <p className="text-sm font-medium truncate transition-colors" style={{ color: "#dcdce4" }}>
                         {r.title}
                       </p>
-                      <p className="text-xs text-[#666] truncate mt-0.5">{r.subtitle}</p>
+                      <p className="text-xs truncate mt-0.5" style={{ color: "#606070" }}>{r.subtitle}</p>
                     </div>
-                    <span className="text-[10px] text-[#555] flex-shrink-0 mt-1 group-hover:text-[#888]">
+                    <span className="text-[10px] flex-shrink-0 mt-1" style={{ color: "#484858" }}>
                       {r.category}
                     </span>
                   </a>
@@ -173,13 +182,35 @@ export function GlobalSearch() {
               </div>
             )}
           </div>
-        )}
-
-        {!query && (
-          <div className="px-4 py-6 text-center text-[#555] text-xs">
+        ) : (
+          <div className="px-4 py-5 text-center text-xs" style={{ color: "#505060" }}>
             Digite para buscar entre {index.length} itens do roadmap
+            <div className="flex items-center justify-center gap-3 mt-3">
+              {["Python OOP", "Docker", "React Hooks", "FastAPI"].map(s => (
+                <button
+                  key={s}
+                  onClick={() => setQuery(s)}
+                  className="px-2.5 py-1 rounded-md text-[11px] transition-colors"
+                  style={{ background: "#1a1a26", border: "1px solid #252535", color: "#7c6af7" }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
         )}
+
+        <div className="px-4 py-2 flex items-center gap-4" style={{ borderTop: "1px solid #1a1a22", background: "#111118" }}>
+          <span className="text-[10px]" style={{ color: "#484858" }}>
+            <kbd className="px-1 rounded" style={{ background: "#1e1e2a", border: "1px solid #2a2a38" }}>↑↓</kbd> navegar
+          </span>
+          <span className="text-[10px]" style={{ color: "#484858" }}>
+            <kbd className="px-1 rounded" style={{ background: "#1e1e2a", border: "1px solid #2a2a38" }}>↵</kbd> abrir
+          </span>
+          <span className="text-[10px]" style={{ color: "#484858" }}>
+            <kbd className="px-1 rounded" style={{ background: "#1e1e2a", border: "1px solid #2a2a38" }}>Esc</kbd> fechar
+          </span>
+        </div>
       </div>
     </div>
   );

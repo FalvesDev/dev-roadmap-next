@@ -1,40 +1,39 @@
 "use client";
 
+import { Search } from "lucide-react";
+
 export function SearchTrigger() {
   function openSearch() {
-    window.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true })
-    );
+    document.dispatchEvent(new CustomEvent("open-search"));
   }
 
   return (
-    <div className="bg-[#111] border border-[#2a2a2a] rounded-xl p-4">
-      <p className="text-xs font-semibold text-[#555] uppercase tracking-wider mb-3">
-        Busca Rápida
-      </p>
-      <button
-        onClick={openSearch}
-        className="w-full flex items-center gap-2 px-3 py-2.5 bg-[#0a0a0a] border border-[#222] rounded-lg cursor-pointer hover:border-[#333] transition-colors group"
+    <button
+      onClick={openSearch}
+      aria-label="Buscar tópico (Ctrl K)"
+      className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs transition-all"
+      style={{ background: "#111118", border: "1px solid #1e1e2a", color: "#505060" }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.borderColor = "#7c6af740";
+        el.style.color = "#9090b0";
+        el.style.background = "#16161e";
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.borderColor = "#1e1e2a";
+        el.style.color = "#505060";
+        el.style.background = "#111118";
+      }}
+    >
+      <Search size={12} />
+      <span className="flex-1 text-left">Buscar tópico...</span>
+      <kbd
+        className="text-[9px] px-1.5 py-0.5 rounded"
+        style={{ background: "#1a1a24", border: "1px solid #252535", color: "#3a3a4a" }}
       >
-        <span className="text-[#555]">🔍</span>
-        <span className="flex-1 text-xs text-[#444] group-hover:text-[#666] text-left">
-          Buscar tópico...
-        </span>
-        <kbd className="text-[9px] bg-[#1a1a1a] border border-[#2a2a2a] px-1.5 py-0.5 rounded text-[#444]">
-          Ctrl K
-        </kbd>
-      </button>
-      <div className="mt-3 space-y-1.5">
-        {["Python OOP", "Docker basics", "React Hooks", "FastAPI JWT"].map((q) => (
-          <a
-            key={q}
-            href="#artigos"
-            className="block text-xs text-[#555] hover:text-violet-400 transition-colors py-1 border-b border-[#1a1a1a] last:border-0"
-          >
-            → {q}
-          </a>
-        ))}
-      </div>
-    </div>
+        ⌃K
+      </kbd>
+    </button>
   );
 }

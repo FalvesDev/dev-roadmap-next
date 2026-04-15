@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeProvider";
 import { LocaleToggle } from "@/components/I18nProvider";
+import { SearchTrigger } from "@/components/SearchTrigger";
 
 const navSections = [
   {
@@ -62,11 +63,12 @@ export function Sidebar() {
   }, []);
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-52 flex flex-col z-50 hidden lg:flex"
+    <aside
+      className="fixed top-0 left-0 h-screen w-52 flex flex-col z-50 hidden lg:flex"
       style={{ background: "#14141c", borderRight: "1px solid #26263a" }}
     >
       {/* Logo */}
-      <div className="px-4 py-5" style={{ borderBottom: "1px solid #26263a" }}>
+      <div className="px-4 pt-5 pb-3" style={{ borderBottom: "1px solid #26263a" }}>
         <div className="flex items-center gap-2.5 mb-1">
           <div className="w-5 h-5 rounded bg-[#6d5ef5] flex items-center justify-center flex-shrink-0">
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -75,11 +77,13 @@ export function Sidebar() {
           </div>
           <span className="text-sm font-semibold text-[#eeeef6] tracking-tight">Dev Roadmap</span>
         </div>
-        <p className="text-[10px] pl-7" style={{ color: "#8080a0" }}>Python · TypeScript · 2025</p>
+        <p className="text-[10px] pl-7 mb-3" style={{ color: "#8080a0" }}>Python · TypeScript · 2025</p>
+        {/* Search bar in sidebar */}
+        <SearchTrigger />
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-4 overflow-y-auto">
+      <nav className="flex-1 px-2 py-4 overflow-y-auto" data-tour="sidebar-modules">
         {navSections.map((section) => (
           <div key={section.label} className="mb-5">
             <p
