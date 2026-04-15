@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
+import { BottomNav } from "@/components/BottomNav";
 import { StickyProgress } from "@/components/StickyProgress";
 import { ProgressStats } from "@/components/ProgressStats";
 import { ProgressCharts } from "@/components/ProgressCharts";
@@ -41,9 +42,10 @@ import { OnboardingTour } from "@/components/OnboardingTour";
 import { LocaleToggle, useI18n } from "@/components/I18nProvider";
 import {
   Brain, Share2, PenLine, Timer, DatabaseBackup,
-  GraduationCap, CalendarDays, Award, HelpCircle, Keyboard,
+  GraduationCap, CalendarDays, Award, HelpCircle, Keyboard, Map,
 } from "lucide-react";
 
+/* ── Divider ─────────────────────────────────── */
 function Divider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4 my-12 animate-fade-in">
@@ -56,27 +58,40 @@ function Divider({ label }: { label: string }) {
   );
 }
 
-function ActionBtn({ label, icon: Icon, onClick }: { label: string; icon: React.ElementType; onClick: () => void }) {
+/* ── ToolBtn: compact icon + label button ─────── */
+function ToolBtn({
+  label, icon: Icon, onClick, accent,
+}: {
+  label: string; icon: React.ElementType; onClick: () => void; accent?: string;
+}) {
+  const base = accent ?? "#7c6af7";
   return (
     <button
       onClick={onClick}
       aria-label={label}
-      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap flex-shrink-0"
-      style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
+      title={label}
+      className="flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl text-center transition-all duration-150 flex-shrink-0"
+      style={{ background: "#16161e", color: "#9090b0", border: "1px solid #1e1e2a", minWidth: "60px" }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.color = "#c0c0d8"; el.style.borderColor = "#7c6af740"; el.style.background = "#1e1a30";
+        el.style.background = `${base}12`;
+        el.style.borderColor = `${base}40`;
+        el.style.color = base;
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.color = "#9090b0"; el.style.borderColor = "#252535"; el.style.background = "#1a1a28";
+        el.style.background = "#16161e";
+        el.style.borderColor = "#1e1e2a";
+        el.style.color = "#9090b0";
       }}
     >
-      <Icon size={12} /> {label}
+      <Icon size={15} />
+      <span className="text-[9px] font-semibold tracking-wide whitespace-nowrap">{label}</span>
     </button>
   );
 }
 
+/* ── Main page ───────────────────────────────── */
 export default function Home() {
   const { t } = useI18n();
 
@@ -117,6 +132,7 @@ export default function Home() {
     <div className="flex min-h-screen bg-[#0d0d12]">
       <Sidebar />
       <MobileNav />
+      <BottomNav />
       <StickyProgress />
       <GlobalSearch />
 
@@ -135,47 +151,48 @@ export default function Home() {
       {showCertificate  && <Certificate       onClose={() => setShowCertificate(false)} />}
       {showShortcuts    && <KeyboardShortcuts onClose={() => setShowShortcuts(false)} />}
 
-      <main id="main-content" className="flex-1 lg:ml-52 w-full">
+      <main
+        id="main-content"
+        className="flex-1 lg:ml-52 w-full pb-16 lg:pb-0"
+      >
 
-        {/* ── HERO ── */}
+        {/* ══════════════════════════════════════════
+            HERO — dashboard de progresso
+        ══════════════════════════════════════════ */}
         <section
           id="overview"
-          className="relative border-b border-[#1a1a22] animate-fade-in-up"
-          style={{ background: "#13131a" }}
+          className="relative animate-fade-in-up"
+          style={{ background: "#0f0f16", borderBottom: "1px solid #1a1a22" }}
         >
-          {/* Ambient blobs */}
+          {/* Ambient glow */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full opacity-[0.05]"
-              style={{ background: "radial-gradient(circle, #7c6af7, transparent)" }} />
-            <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full opacity-[0.03]"
-              style={{ background: "radial-gradient(circle, #a78bfa, transparent)" }} />
+            <div
+              className="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full opacity-[0.05]"
+              style={{ background: "radial-gradient(circle, #7c6af7, transparent)" }}
+            />
           </div>
 
-          <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-8 md:py-10">
-            <div className="flex flex-col lg:flex-row lg:items-start gap-8">
+          <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10">
 
-              {/* LEFT: main content */}
+            {/* ── Title band ── */}
+            <div className="pt-8 pb-6 flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex-1 min-w-0">
-
-                {/* Tag row */}
-                <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#909098]">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#505060]">
                     {t("heroTag")}
                   </span>
                   <span
                     className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
-                    style={{ background: "#34d39915", color: "#34d399", border: "1px solid #34d39930" }}
+                    style={{ background: "#34d39910", color: "#34d399", border: "1px solid #34d39925" }}
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] glow-dot" />
-                    Grátis & Open Source
+                    Open Source
                   </span>
                 </div>
-
-                {/* Heading */}
-                <h1 className="text-2xl sm:text-3xl md:text-[2rem] font-extrabold text-[#ededf4] mb-3 leading-tight tracking-tight">
-                  {t("heroTitle1")}<br />
+                <h1 className="text-2xl sm:text-[1.7rem] font-extrabold text-[#ededf4] leading-tight tracking-tight">
+                  {t("heroTitle1")}{" "}
                   <span style={{
-                    background: "linear-gradient(135deg, #7c6af7 0%, #a78bfa 50%, #7c6af7 100%)",
+                    background: "linear-gradient(135deg, #7c6af7 0%, #a78bfa 60%, #7c6af7 100%)",
                     backgroundSize: "200% auto",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
@@ -184,72 +201,67 @@ export default function Home() {
                     {t("heroTitle2")}
                   </span>
                 </h1>
-
-                <p className="text-sm text-[#a0a0b0] max-w-md leading-relaxed mb-5">
+                <p className="text-[13px] text-[#606070] mt-1.5 max-w-md leading-relaxed">
                   {t("heroDesc")}
                 </p>
-
-                <HeroCTA />
-
-                {/* Quick actions — horizontal scroll on mobile, wrap on desktop */}
-                <div className="mb-4" data-tour="quick-actions">
-                  <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1">
-                    <ActionBtn label={t("actionFlashcard")} icon={Brain}         onClick={() => setShowFlashcards(true)} />
-                    <ActionBtn label={t("actionPomodoro")}  icon={Timer}         onClick={() => setShowPomodoro(true)} />
-                    <ActionBtn label={t("actionQuiz")}      icon={HelpCircle}    onClick={() => setShowQuiz(true)} />
-                    <ActionBtn label={t("actionNotes")}     icon={PenLine}       onClick={() => setShowNotes(true)} />
-                    <ActionBtn label={t("actionActivity")}  icon={CalendarDays}  onClick={() => setShowActivity(true)} />
-                    <ActionBtn label={t("actionShare")}     icon={Share2}        onClick={() => setShowShare(true)} />
-                    <ActionBtn label={t("actionExport")}    icon={GraduationCap} onClick={() => setShowExport(true)} />
-                    <ActionBtn label={t("actionCert")}      icon={Award}         onClick={() => setShowCertificate(true)} />
-                    <ActionBtn label={t("actionBackup")}    icon={DatabaseBackup} onClick={() => setShowBackup(true)} />
-                    <AchievementsBadge onClick={() => setShowAchievements(true)} />
-                    <ActionBtn label="Atalhos" icon={Keyboard} onClick={() => setShowShortcuts(true)} />
-                    <StudyReminder />
-                    <OnboardingTour />
-                    <LocaleToggle />
-                  </div>
-                </div>
-
-                {/* Tech tags — hidden on small screens */}
-                <div className="hidden sm:flex flex-wrap gap-2">
-                  {["Python", "TypeScript", "FastAPI", "React", "Docker", "PostgreSQL"].map((tag) => (
-                    <span key={tag}
-                      className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#252535] bg-[#1a1a24] text-[#909098]">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
               </div>
-
-              {/* RIGHT: widgets */}
-              <div className="lg:w-60 lg:flex-shrink-0">
-                {/* Mobile: horizontal scroll */}
-                <div className="lg:hidden -mx-5 sm:-mx-8">
-                  <div className="flex gap-3 overflow-x-auto scrollbar-none px-5 sm:px-8 pb-2">
-                    <div className="flex-shrink-0 w-60" data-tour="daily-challenge"><DailyChallenge /></div>
-                    <div className="flex-shrink-0 w-60" data-tour="next-step"><NextStepWidget /></div>
-                    <div className="flex-shrink-0 w-56" data-tour="weekly-goal"><WeeklyGoal /></div>
-                    <div className="flex-shrink-0 w-56" data-tour="streak"><StreakTracker /></div>
-                    <div className="flex-shrink-0 w-56"><PathSelector /></div>
-                  </div>
-                </div>
-
-                {/* Desktop: vertical stack */}
-                <div className="hidden lg:flex flex-col space-y-3">
-                  <div data-tour="daily-challenge"><DailyChallenge /></div>
-                  <div data-tour="next-step"><NextStepWidget /></div>
-                  <div data-tour="weekly-goal"><WeeklyGoal /></div>
-                  <PathSelector />
-                  <div data-tour="streak"><StreakTracker /></div>
-                </div>
+              <div className="flex-shrink-0 flex items-center gap-2">
+                <HeroCTA />
               </div>
             </div>
+
+            {/* ── Widget grid ── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-6">
+
+              {/* Col 1: Daily challenge */}
+              <div data-tour="daily-challenge">
+                <DailyChallenge />
+              </div>
+
+              {/* Col 2: Next step + weekly goal */}
+              <div className="flex flex-col gap-4">
+                <div data-tour="next-step"><NextStepWidget /></div>
+                <div data-tour="weekly-goal"><WeeklyGoal /></div>
+              </div>
+
+              {/* Col 3: Streak + path selector */}
+              <div className="flex flex-col gap-4">
+                <div data-tour="streak"><StreakTracker /></div>
+                <PathSelector />
+              </div>
+            </div>
+
+            {/* ── Tools strip ── */}
+            <div className="pb-6" data-tour="quick-actions">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#404050]">
+                  Ferramentas
+                </span>
+                <div className="flex-1 h-px" style={{ background: "#1a1a22" }} />
+              </div>
+              <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1">
+                <ToolBtn label="Flashcards" icon={Brain}         onClick={() => setShowFlashcards(true)} />
+                <ToolBtn label="Pomodoro"   icon={Timer}         onClick={() => setShowPomodoro(true)} />
+                <ToolBtn label="Quiz"       icon={HelpCircle}    onClick={() => setShowQuiz(true)} />
+                <ToolBtn label="Notas"      icon={PenLine}       onClick={() => setShowNotes(true)} />
+                <ToolBtn label="Histórico"  icon={CalendarDays}  onClick={() => setShowActivity(true)} />
+                <ToolBtn label="Compartilhar" icon={Share2}      onClick={() => setShowShare(true)} />
+                <ToolBtn label="Exportar"   icon={GraduationCap} onClick={() => setShowExport(true)} />
+                <ToolBtn label="Certificado" icon={Award}        onClick={() => setShowCertificate(true)} />
+                <ToolBtn label="Backup"     icon={DatabaseBackup} onClick={() => setShowBackup(true)} />
+                <AchievementsBadge onClick={() => setShowAchievements(true)} />
+                <ToolBtn label="Atalhos"    icon={Keyboard}      onClick={() => setShowShortcuts(true)} />
+                <StudyReminder />
+                <OnboardingTour />
+                <LocaleToggle />
+              </div>
+            </div>
+
           </div>
         </section>
 
         {/* ── CONTENT SECTIONS ── */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-6">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-4">
 
           <Divider label={t("divModules")} />
           <ModuleSection />
@@ -257,9 +269,11 @@ export default function Home() {
           <Divider label={t("divProjects")} />
           <ProjectsSection />
 
-          <Divider label={t("divProgress")} />
-          <ProgressStats />
-          <ProgressCharts />
+          <div id="progresso">
+            <Divider label={t("divProgress")} />
+            <ProgressStats />
+            <ProgressCharts />
+          </div>
 
           <Divider label={t("divArch")} />
           <ArchitectureSection />
@@ -280,15 +294,16 @@ export default function Home() {
           <Divider label={t("divTips")} />
           <TipsSection />
 
-          <footer className="border-t border-[#1a1a22] pt-6 mt-8 text-center" role="contentinfo">
+          <footer className="border-t border-[#1a1a22] pt-6 mt-8 mb-4 text-center" role="contentinfo">
             <p className="text-xs text-[#303038]">{t("footer")}</p>
             <p className="text-[10px] text-[#252530] mt-1">
-              Pressione <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ background: "#1e1e2a", border: "1px solid #303040" }}>?</kbd> para atalhos ·{" "}
+              <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ background: "#1e1e2a", border: "1px solid #303040" }}>?</kbd>{" "}
+              atalhos ·{" "}
               <button
                 onClick={() => document.dispatchEvent(new CustomEvent("start-tour"))}
-                className="underline hover:text-[#404050] transition-colors"
+                className="underline hover:text-[#606070] transition-colors"
               >
-                Tour
+                <Map size={10} className="inline mr-0.5" />Tour
               </button>
             </p>
           </footer>

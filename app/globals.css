@@ -256,6 +256,13 @@ textarea:focus-visible {
   display: none;
 }
 
+/* ── Bottom nav safe area ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav-safe {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom));
+  }
+}
+
 /* ── prefers-reduced-motion ── */
 @media (prefers-reduced-motion: reduce) {
   *,
