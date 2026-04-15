@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { StickyProgress } from "@/components/StickyProgress";
 import { ProgressStats } from "@/components/ProgressStats";
@@ -35,8 +35,13 @@ import { QuizModal } from "@/components/QuizModal";
 import { ActivityTimeline } from "@/components/ActivityTimeline";
 import { ShareProfile } from "@/components/ShareProfile";
 import { Certificate } from "@/components/Certificate";
+import { DailyChallenge } from "@/components/DailyChallenge";
+import { KeyboardShortcuts, useKeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { LocaleToggle, useI18n } from "@/components/I18nProvider";
-import { Brain, Share2, PenLine, Timer, DatabaseBackup, GraduationCap, CalendarDays, Award, HelpCircle } from "lucide-react";
+import {
+  Brain, Share2, PenLine, Timer, DatabaseBackup,
+  GraduationCap, CalendarDays, Award, HelpCircle, Keyboard,
+} from "lucide-react";
 
 function Divider({ label }: { label: string }) {
   return (
@@ -63,6 +68,34 @@ export default function Home() {
   const [showActivity,     setShowActivity]     = useState(false);
   const [showShare,        setShowShare]        = useState(false);
   const [showCertificate,  setShowCertificate]  = useState(false);
+  const [showShortcuts,    setShowShortcuts]    = useState(false);
+
+  // Close any open modal
+  const closeAll = useCallback(() => {
+    setShowFlashcards(false); setShowExport(false); setShowNotes(false);
+    setShowPomodoro(false); setShowAchievements(false); setShowBackup(false);
+    setShowQuiz(false); setShowActivity(false); setShowShare(false);
+    setShowCertificate(false); setShowShortcuts(false);
+  }, []);
+
+  // Global search trigger (opens GlobalSearch which listens to a custom event)
+  const openSearch = useCallback(() => {
+    document.dispatchEvent(new CustomEvent("open-search"));
+  }, []);
+
+  useKeyboardShortcuts({
+    onSearch:    openSearch,
+    onPomodoro:  () => setShowPomodoro(v => !v),
+    onFlashcards:() => setShowFlashcards(v => !v),
+    onNotes:     () => setShowNotes(v => !v),
+    onQuiz:      () => setShowQuiz(v => !v),
+    onShortcuts: () => setShowShortcuts(v => !v),
+    onClose:     closeAll,
+  });
+
+  const anyOpen = showFlashcards || showExport || showNotes || showPomodoro ||
+    showAchievements || showBackup || showQuiz || showActivity ||
+    showShare || showCertificate || showShortcuts;
 
   return (
     <div className="flex min-h-screen bg-[#0d0d12]">
@@ -84,89 +117,104 @@ export default function Home() {
       {showActivity     && <ActivityTimeline  onClose={() => setShowActivity(false)} />}
       {showShare        && <ShareProfile      onClose={() => setShowShare(false)} />}
       {showCertificate  && <Certificate       onClose={() => setShowCertificate(false)} />}
+      {showShortcuts    && <KeyboardShortcuts onClose={() => setShowShortcuts(false)} />}
 
       <main id="main-content" className="flex-1 lg:ml-52 px-5 md:px-10 py-10 max-w-5xl mx-auto w-full">
 
         {/* ── HERO ── */}
-        <section id="overview" className="border border-[#222230] rounded-2xl p-8 md:p-10 mb-10 bg-[#13131a] animate-fade-in-up" style={{ boxShadow: "0 4px 32px rgba(109,94,245,0.06), 0 1px 0 #2a2a38 inset" }}>
-          <div className="flex flex-col md:flex-row md:items-start gap-8">
-            <div className="flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#909098] mb-4">
-                {t("heroTag")}
-              </p>
-              <h1 className="text-2xl md:text-3xl font-bold text-[#ededf4] mb-3 leading-tight tracking-tight">
-                {t("heroTitle1")}<br />
-                <span className="text-[#7c6af7]">{t("heroTitle2")}</span>
-              </h1>
-              <p className="text-sm text-[#a0a0b0] max-w-md leading-relaxed mb-5">
-                {t("heroDesc")}
-              </p>
+        <section id="overview" className="relative border border-[#222230] rounded-2xl overflow-hidden mb-10 animate-fade-in-up"
+          style={{ boxShadow: "0 4px 40px rgba(109,94,245,0.10)" }}>
 
-              <HeroCTA />
+          {/* Background glow blobs */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-[0.06]"
+              style={{ background: "radial-gradient(circle, #7c6af7, transparent)" }} />
+            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full opacity-[0.04]"
+              style={{ background: "radial-gradient(circle, #a78bfa, transparent)" }} />
+          </div>
 
-              {/* Quick actions row 1 */}
-              <div className="flex flex-wrap gap-2 mb-2">
-                {[
-                  { label: t("actionFlashcard"),  icon: Brain,         onClick: () => setShowFlashcards(true) },
-                  { label: t("actionPomodoro"),    icon: Timer,         onClick: () => setShowPomodoro(true) },
-                  { label: t("actionQuiz"),        icon: HelpCircle,    onClick: () => setShowQuiz(true) },
-                  { label: t("actionNotes"),       icon: PenLine,       onClick: () => setShowNotes(true) },
-                  { label: t("actionActivity"),    icon: CalendarDays,  onClick: () => setShowActivity(true) },
-                ].map(({ label, icon: Icon, onClick }) => (
-                  <button
-                    key={label}
-                    onClick={onClick}
-                    aria-label={label}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
-                    style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c0c0d8"; (e.currentTarget as HTMLElement).style.borderColor = "#7c6af740"; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9090b0"; (e.currentTarget as HTMLElement).style.borderColor = "#252535"; }}
-                  >
-                    <Icon size={12} /> {label}
-                  </button>
-                ))}
-              </div>
-              {/* Quick actions row 2 */}
-              <div className="flex flex-wrap gap-2 mb-5">
-                {[
-                  { label: t("actionShare"),    icon: Share2,        onClick: () => setShowShare(true) },
-                  { label: t("actionExport"),   icon: GraduationCap, onClick: () => setShowExport(true) },
-                  { label: t("actionCert"),     icon: Award,         onClick: () => setShowCertificate(true) },
-                  { label: t("actionBackup"),   icon: DatabaseBackup, onClick: () => setShowBackup(true) },
-                ].map(({ label, icon: Icon, onClick }) => (
-                  <button
-                    key={label}
-                    onClick={onClick}
-                    aria-label={label}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
-                    style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#c0c0d8"; (e.currentTarget as HTMLElement).style.borderColor = "#7c6af740"; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#9090b0"; (e.currentTarget as HTMLElement).style.borderColor = "#252535"; }}
-                  >
-                    <Icon size={12} /> {label}
-                  </button>
-                ))}
-                <AchievementsBadge onClick={() => setShowAchievements(true)} />
-                <LocaleToggle />
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {["Python", "TypeScript", "FastAPI", "React", "Docker", "PostgreSQL"].map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#252535] bg-[#1a1a24] text-[#909098]"
-                  >
-                    {tag}
+          <div className="relative p-8 md:p-10 bg-[#13131a]">
+            <div className="flex flex-col md:flex-row md:items-start gap-8">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#909098]">
+                    {t("heroTag")}
                   </span>
-                ))}
+                  {/* Live indicator */}
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                    style={{ background: "#34d39915", color: "#34d399", border: "1px solid #34d39930" }}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#34d399] glow-dot" />
+                    Grátis & Open Source
+                  </span>
+                </div>
+
+                <h1 className="text-2xl md:text-[2rem] font-extrabold text-[#ededf4] mb-3 leading-tight tracking-tight">
+                  {t("heroTitle1")}<br />
+                  <span style={{
+                    background: "linear-gradient(135deg, #7c6af7 0%, #a78bfa 50%, #7c6af7 100%)",
+                    backgroundSize: "200% auto",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    animation: "shimmer 4s linear infinite",
+                  }}>
+                    {t("heroTitle2")}
+                  </span>
+                </h1>
+
+                <p className="text-sm text-[#a0a0b0] max-w-md leading-relaxed mb-5">
+                  {t("heroDesc")}
+                </p>
+
+                <HeroCTA />
+
+                {/* Quick actions — row 1 */}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {[
+                    { label: t("actionFlashcard"), icon: Brain,        onClick: () => setShowFlashcards(true) },
+                    { label: t("actionPomodoro"),  icon: Timer,        onClick: () => setShowPomodoro(true) },
+                    { label: t("actionQuiz"),      icon: HelpCircle,   onClick: () => setShowQuiz(true) },
+                    { label: t("actionNotes"),     icon: PenLine,      onClick: () => setShowNotes(true) },
+                    { label: t("actionActivity"),  icon: CalendarDays, onClick: () => setShowActivity(true) },
+                  ].map(({ label, icon: Icon, onClick }) => (
+                    <ActionBtn key={label} label={label} icon={Icon} onClick={onClick} />
+                  ))}
+                </div>
+
+                {/* Quick actions — row 2 */}
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {[
+                    { label: t("actionShare"),   icon: Share2,         onClick: () => setShowShare(true) },
+                    { label: t("actionExport"),  icon: GraduationCap,  onClick: () => setShowExport(true) },
+                    { label: t("actionCert"),    icon: Award,          onClick: () => setShowCertificate(true) },
+                    { label: t("actionBackup"),  icon: DatabaseBackup, onClick: () => setShowBackup(true) },
+                  ].map(({ label, icon: Icon, onClick }) => (
+                    <ActionBtn key={label} label={label} icon={Icon} onClick={onClick} />
+                  ))}
+                  <AchievementsBadge onClick={() => setShowAchievements(true)} />
+                  <ActionBtn label="Atalhos" icon={Keyboard} onClick={() => setShowShortcuts(true)} />
+                  <LocaleToggle />
+                </div>
+
+                {/* Tech tags */}
+                <div className="flex flex-wrap gap-2">
+                  {["Python", "TypeScript", "FastAPI", "React", "Docker", "PostgreSQL"].map((tag) => (
+                    <span key={tag}
+                      className="px-2.5 py-1 rounded-md text-[11px] font-medium border border-[#252535] bg-[#1a1a24] text-[#909098]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="md:w-64 flex-shrink-0 space-y-4">
-              <SearchTrigger />
-              <NextStepWidget />
-              <WeeklyGoal />
-              <PathSelector />
-              <StreakTracker />
+
+              {/* Right column */}
+              <div className="md:w-64 flex-shrink-0 space-y-3">
+                <SearchTrigger />
+                <DailyChallenge />
+                <NextStepWidget />
+                <WeeklyGoal />
+                <PathSelector />
+                <StreakTracker />
+              </div>
             </div>
           </div>
         </section>
@@ -212,8 +260,36 @@ export default function Home() {
         {/* Footer */}
         <footer className="border-t border-[#1a1a22] pt-6 mt-8 text-center" role="contentinfo">
           <p className="text-xs text-[#303038]">{t("footer")}</p>
+          <p className="text-[10px] text-[#252530] mt-1">
+            Pressione <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ background: "#1e1e2a", border: "1px solid #303040" }}>?</kbd> para ver os atalhos de teclado
+          </p>
         </footer>
       </main>
     </div>
+  );
+}
+
+function ActionBtn({ label, icon: Icon, onClick }: { label: string; icon: React.ElementType; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={label}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
+      style={{ background: "#1a1a28", color: "#9090b0", border: "1px solid #252535" }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.color = "#c0c0d8";
+        el.style.borderColor = "#7c6af740";
+        el.style.background = "#1e1a30";
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.color = "#9090b0";
+        el.style.borderColor = "#252535";
+        el.style.background = "#1a1a28";
+      }}
+    >
+      <Icon size={12} /> {label}
+    </button>
   );
 }
