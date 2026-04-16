@@ -4,6 +4,7 @@ import { PathProvider } from "@/components/PathSelector";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { I18nProvider } from "@/components/I18nProvider";
 import { LayoutProvider } from "@/components/LayoutContext";
+import { SiteThemeProvider } from "@/components/SiteThemeContext";
 
 export const metadata: Metadata = {
   title: "Dev Roadmap — Python & TypeScript",
@@ -29,13 +30,15 @@ export default function RootLayout({
       <body className="bg-[#0a0a0a] text-[#e5e5e5] min-h-full antialiased">
         <a href="#main-content" className="skip-to-content">Ir para o conteúdo</a>
         <I18nProvider>
-          <ThemeProvider>
-            <PathProvider>
-              <LayoutProvider>
-                {children}
-              </LayoutProvider>
-            </PathProvider>
-          </ThemeProvider>
+          <SiteThemeProvider>
+            <ThemeProvider>
+              <PathProvider>
+                <LayoutProvider>
+                  {children}
+                </LayoutProvider>
+              </PathProvider>
+            </ThemeProvider>
+          </SiteThemeProvider>
         </I18nProvider>
       </body>
     </html>

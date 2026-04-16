@@ -71,7 +71,7 @@ export function CareerSection() {
       <div className="space-y-6">
 
         {/* Salaries */}
-        <Card icon={TrendingUp} title="Salários reais (2025, Brasil)" iconColor="#10b981">
+        <Card icon={TrendingUp} title="Salários reais (2026, Brasil)" iconColor="#10b981">
           <div className="space-y-3">
             {salaries.map((s) => (
               <div key={s.role} className="flex items-center gap-4">

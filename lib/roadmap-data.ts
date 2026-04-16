@@ -231,7 +231,7 @@ export const phases: Phase[] = [
       },
       {
         title: "🐳 Docker & Deploy Básico",
-        subtitle: "Não saber Docker em 2025 é problemático",
+        subtitle: "Não saber Docker em 2026 é problemático",
         items: [
           { id: "f4-10", label: "O que é Docker e por que containers", meta: "VM vs container, portabilidade", difficulty: "medium" },
           { id: "f4-11", label: "Dockerfile para app Python e Node", meta: "FROM, RUN, COPY, CMD, EXPOSE", difficulty: "medium" },

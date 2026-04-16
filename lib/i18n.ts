@@ -3,7 +3,7 @@ export type Locale = "pt" | "en";
 export const translations = {
   pt: {
     // Hero
-    heroTag:       "Roadmap 2025 · Python & TypeScript",
+    heroTag:       "Roadmap 2026 · Python & TypeScript",
     heroTitle1:    "Do zero ao dev júnior",
     heroTitle2:    "em 9 meses.",
     heroDesc:      "Módulos semana a semana, checklist interativo com explicações completas, 110+ recursos curados e trilha de carreira. Tudo que precisa, na ordem certa.",
@@ -49,7 +49,7 @@ export const translations = {
     navTips:       "Dicas & Referência",
 
     // Footer
-    footer: "Dev Roadmap · Python 3.12 · TypeScript 5 · Node 20 · 2025",
+    footer: "Dev Roadmap · Python 3.12 · TypeScript 5 · Node 20 · 2026",
 
     // Buttons
     btnSave:    "Salvar",
@@ -67,7 +67,7 @@ export const translations = {
   },
   en: {
     // Hero
-    heroTag:       "Roadmap 2025 · Python & TypeScript",
+    heroTag:       "Roadmap 2026 · Python & TypeScript",
     heroTitle1:    "From zero to junior dev",
     heroTitle2:    "in 9 months.",
     heroDesc:      "Week-by-week modules, interactive checklist with full explanations, 110+ curated resources and career track. Everything you need, in the right order.",
@@ -113,7 +113,7 @@ export const translations = {
     navTips:       "Tips & Reference",
 
     // Footer
-    footer: "Dev Roadmap · Python 3.12 · TypeScript 5 · Node 20 · 2025",
+    footer: "Dev Roadmap · Python 3.12 · TypeScript 5 · Node 20 · 2026",
 
     // Buttons
     btnSave:    "Save",
