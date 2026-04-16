@@ -199,9 +199,9 @@ export function PomodoroTimer({ onClose }: { onClose: () => void }) {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 text-center">
           {[
-            { label: "Hoje", value: stats.todaySessions + (sessions > 0 ? sessions - (loadStats().todaySessions - (loadStats().lastDate === new Date().toISOString().slice(0,10) ? loadStats().todaySessions : 0)) : 0) },
+            { label: "Hoje",        value: stats.todaySessions  ?? 0 },
             { label: "Esta sessão", value: sessions },
-            { label: "Total", value: stats.totalSessions },
+            { label: "Total",       value: stats.totalSessions ?? 0 },
           ].map(({ label, value }) => (
             <div key={label} className="rounded-lg py-2 px-1" style={{ background: "#1a1a26", border: "1px solid #252535" }}>
               <p className="text-lg font-bold text-[#ededf4]">{value}</p>

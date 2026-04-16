@@ -23,28 +23,22 @@ import { FlashcardMode } from "@/components/FlashcardMode";
 import { ExportProgress } from "@/components/ExportProgress";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { PhaseCompleteModal } from "@/components/PhaseCompleteModal";
-import { NextStepWidget } from "@/components/NextStepWidget";
 import { NotesDashboard } from "@/components/NotesDashboard";
 import { TabTitle } from "@/components/TabTitle";
 import { PomodoroTimer } from "@/components/PomodoroTimer";
 import { GlossarySection } from "@/components/GlossarySection";
 import { WeeklyGoal } from "@/components/WeeklyGoal";
-import { AchievementsPanel, AchievementsBadge } from "@/components/AchievementsPanel";
+import { AchievementsPanel } from "@/components/AchievementsPanel";
 import { BackupRestore } from "@/components/BackupRestore";
 import { QuizModal } from "@/components/QuizModal";
 import { ActivityTimeline } from "@/components/ActivityTimeline";
 import { ShareProfile } from "@/components/ShareProfile";
 import { Certificate } from "@/components/Certificate";
-import { DailyChallenge } from "@/components/DailyChallenge";
 import { KeyboardShortcuts, useKeyboardShortcuts } from "@/components/KeyboardShortcuts";
-import { StudyReminder } from "@/components/StudyReminder";
-import { OnboardingTour } from "@/components/OnboardingTour";
-import { LocaleToggle, useI18n } from "@/components/I18nProvider";
-import {
-  Brain, Share2, PenLine, Timer, DatabaseBackup,
-  GraduationCap, CalendarDays, Award, HelpCircle, Keyboard,
-  Flame, Target,
-} from "lucide-react";
+import { useI18n } from "@/components/I18nProvider";
+import { RightPanel } from "@/components/RightPanel";
+import { useLayout } from "@/components/LayoutContext";
+import { Flame, Target } from "lucide-react";
 
 /* ── Section divider — gradient fade style ─── */
 function Divider({ label }: { label: string }) {
@@ -56,32 +50,6 @@ function Divider({ label }: { label: string }) {
       </div>
       <div className="flex-1 divider-line" />
     </div>
-  );
-}
-
-/* ── Tool button — retro style ──────────────── */
-function ToolBtn({ label, icon: Icon, onClick }: { label: string; icon: React.ElementType; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150 whitespace-nowrap flex-shrink-0 mono-label"
-      style={{ background: "transparent", color: "#606070", border: "1px solid rgba(255,255,255,0.07)" }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.background = "rgba(124,58,237,0.12)";
-        el.style.borderColor = "rgba(124,58,237,0.4)";
-        el.style.color = "#c4b5fd";
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.background = "transparent";
-        el.style.borderColor = "rgba(255,255,255,0.07)";
-        el.style.color = "#606070";
-      }}
-    >
-      <Icon size={12} /> {label}
-    </button>
   );
 }
 
@@ -114,6 +82,7 @@ function HeroStatus() {
 /* ── Main page ───────────────────────────────── */
 export default function Home() {
   const { t } = useI18n();
+  const { leftOpen, rightOpen } = useLayout();
 
   const [showFlashcards,   setShowFlashcards]   = useState(false);
   const [showExport,       setShowExport]       = useState(false);
@@ -144,13 +113,41 @@ export default function Home() {
     onClose:      closeAll,
   });
 
+  /* Dynamic main margins based on sidebar states (desktop only) */
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const mainStyle = isDesktop ? {
+    marginLeft:  leftOpen  ? "208px" : "56px",
+    marginRight: rightOpen ? "256px" : "0px",
+    transition:  "margin 280ms cubic-bezier(0.4,0,0.2,1)",
+  } : {};
+
   return (
-    <div className="flex min-h-screen" style={{ background: "#080812" }}>
+    <div className="flex min-h-screen" style={{ background: "#060610" }}>
       <Sidebar />
       <MobileNav />
       <BottomNav />
       <StickyProgress />
       <GlobalSearch />
+      <RightPanel
+        onFlashcards  ={() => setShowFlashcards(true)}
+        onPomodoro    ={() => setShowPomodoro(true)}
+        onQuiz        ={() => setShowQuiz(true)}
+        onNotes       ={() => setShowNotes(true)}
+        onActivity    ={() => setShowActivity(true)}
+        onShare       ={() => setShowShare(true)}
+        onExport      ={() => setShowExport(true)}
+        onCertificate ={() => setShowCertificate(true)}
+        onBackup      ={() => setShowBackup(true)}
+        onAchievements={() => setShowAchievements(true)}
+        onShortcuts   ={() => setShowShortcuts(true)}
+      />
 
       <TabTitle />
       <OnboardingModal />
@@ -167,20 +164,12 @@ export default function Home() {
       {showCertificate  && <Certificate       onClose={() => setShowCertificate(false)} />}
       {showShortcuts    && <KeyboardShortcuts onClose={() => setShowShortcuts(false)} />}
 
-      <main id="main-content" className="flex-1 lg:ml-52 w-full pb-16 lg:pb-0">
+      <main id="main-content" className="flex-1 w-full pb-16 lg:pb-0" style={mainStyle}>
 
-        {/* ════════════════════════════════════════
-            HERO — Axiom
-        ════════════════════════════════════════ */}
+        {/* ═══ HERO ═══════════════════════════════════════ */}
         <section id="overview" className="relative overflow-hidden" style={{ background: "#060610" }}>
-
-          {/* Accent bar top */}
           <div className="accent-bar" />
-
-          {/* Grid lines (Linear-style) */}
           <div className="grid-lines absolute inset-0 pointer-events-none" />
-
-          {/* Multi-layer gradient atmosphere */}
           <div className="absolute inset-0 pointer-events-none" style={{
             background: `
               radial-gradient(ellipse 70% 60% at 15% 40%, rgba(124,58,237,0.11) 0%, transparent 65%),
@@ -189,23 +178,21 @@ export default function Home() {
             `
           }} />
 
-          <div className="relative max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-14 md:py-20">
+          <div className="relative max-w-4xl mx-auto px-5 sm:px-8 md:px-10 py-14 md:py-20">
 
-            {/* ── Terminal breadcrumb ── */}
+            {/* Terminal breadcrumb */}
             <div className="flex items-center gap-3 mb-10">
-              <span className="mono-label" style={{ color: "#f59e0b" }}>
-                $ dev-roadmap --year 2025
-              </span>
-              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.05)" }} />
+              <span className="mono-label" style={{ color: "#f59e0b" }}>$ dev-roadmap --year 2025</span>
+              <div className="flex-1 divider-line" />
               <span className="flex items-center gap-1.5 mono-label" style={{ color: "#22c55e" }}>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] glow-dot" />
                 open source
               </span>
             </div>
 
-            {/* ── Headline — dramatic ── */}
+            {/* Headline */}
             <div className="mb-8">
-              <p className="font-normal mb-1" style={{ fontSize: "clamp(0.95rem, 2vw, 1.2rem)", color: "#404058", letterSpacing: "0.02em" }}>
+              <p className="font-normal mb-1" style={{ fontSize: "clamp(0.95rem, 2vw, 1.2rem)", color: "#404058" }}>
                 Do zero ao
               </p>
               <h1 className="font-black leading-[0.9] tracking-tight text-gradient-purple"
@@ -218,13 +205,13 @@ export default function Home() {
               </p>
             </div>
 
-            {/* ── Stats — glass cards ── */}
+            {/* Stats glass cards */}
             <div className="flex flex-wrap gap-3 mb-9">
               {[
-                { n: "95",   l: "módulos",     color: "#7c3aed" },
-                { n: "5",    l: "fases",       color: "#3b82f6" },
-                { n: "100%", l: "gratuito",    color: "#10b981" },
-                { n: "∞",    l: "conteúdo",    color: "#f59e0b" },
+                { n: "95",   l: "módulos",  color: "#7c3aed" },
+                { n: "5",    l: "fases",    color: "#3b82f6" },
+                { n: "100%", l: "gratuito", color: "#10b981" },
+                { n: "∞",    l: "conteúdo", color: "#f59e0b" },
               ].map(({ n, l, color }) => (
                 <div key={l} className="stat-card rounded-xl px-4 py-3" style={{ minWidth: "84px" }}>
                   <p className="text-[1.6rem] font-black leading-none tabular-nums" style={{ color }}>{n}</p>
@@ -233,45 +220,17 @@ export default function Home() {
               ))}
             </div>
 
-            {/* ── CTA + status ── */}
-            <div className="flex flex-wrap items-center gap-4 mb-10">
+            {/* CTA + status */}
+            <div className="flex flex-wrap items-center gap-4">
               <HeroCTA />
               <HeroStatus />
-            </div>
-
-            {/* ── Next step widget (compact, single row) ── */}
-            <div className="mb-8" data-tour="next-step">
-              <NextStepWidget />
-            </div>
-
-            {/* ── Tools — primary group only ── */}
-            <div data-tour="quick-actions">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="mono-label" style={{ color: "#7c3aed" }}>&gt;_</span>
-                <span className="mono-label" style={{ color: "#404060" }}>ferramentas</span>
-                <div className="flex-1 divider-line" />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <ToolBtn label="Flashcards"   icon={Brain}          onClick={() => setShowFlashcards(true)} />
-                <ToolBtn label="Pomodoro"     icon={Timer}          onClick={() => setShowPomodoro(true)} />
-                <ToolBtn label="Quiz"         icon={HelpCircle}     onClick={() => setShowQuiz(true)} />
-                <ToolBtn label="Notas"        icon={PenLine}        onClick={() => setShowNotes(true)} />
-                <ToolBtn label="Histórico"    icon={CalendarDays}   onClick={() => setShowActivity(true)} />
-                <ToolBtn label="Exportar"     icon={GraduationCap}  onClick={() => setShowExport(true)} />
-                <ToolBtn label="Certificado"  icon={Award}          onClick={() => setShowCertificate(true)} />
-                <AchievementsBadge onClick={() => setShowAchievements(true)} />
-                <ToolBtn label="Atalhos"      icon={Keyboard}       onClick={() => setShowShortcuts(true)} />
-                <LocaleToggle />
-              </div>
             </div>
 
           </div>
         </section>
 
-        {/* ════════════════════════════════════════
-            CONTEÚDO
-        ════════════════════════════════════════ */}
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 md:px-10 py-4">
+        {/* ═══ CONTEÚDO ══════════════════════════════════ */}
+        <div className="max-w-4xl mx-auto px-5 sm:px-8 md:px-10 py-4">
 
           <Divider label={t("divModules")} />
           <ModuleSection />

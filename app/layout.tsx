@@ -3,6 +3,7 @@ import "./globals.css";
 import { PathProvider } from "@/components/PathSelector";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { I18nProvider } from "@/components/I18nProvider";
+import { LayoutProvider } from "@/components/LayoutContext";
 
 export const metadata: Metadata = {
   title: "Dev Roadmap — Python & TypeScript",
@@ -30,7 +31,9 @@ export default function RootLayout({
         <I18nProvider>
           <ThemeProvider>
             <PathProvider>
-              {children}
+              <LayoutProvider>
+                {children}
+              </LayoutProvider>
             </PathProvider>
           </ThemeProvider>
         </I18nProvider>
