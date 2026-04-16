@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   ChevronDown, CheckCircle2, Circle,
   ExternalLink, BookOpen, Play, FileText,
   Wrench, GraduationCap, BookMarked, PenLine,
-  Flag, RotateCcw,
+  Flag, RotateCcw, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { phases } from "@/lib/roadmap-data";
 import { articles } from "@/lib/articles-data";
@@ -189,6 +189,32 @@ export function ModuleSection() {
   const [review, setReview] = useState<Set<string>>(new Set());
   const { path } = useLearningPath();
 
+  /* ── Carousel state ── */
+  const tabsRef        = useRef<HTMLDivElement>(null);
+  const [canLeft,  setCanLeft]  = useState(false);
+  const [canRight, setCanRight] = useState(true);
+
+  const syncArrows = useCallback(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 2);
+    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+  }, []);
+
+  /* Auto-scroll active pill into view */
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    const pill = el.children[activePhase] as HTMLElement | undefined;
+    if (pill) pill.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" });
+    setTimeout(syncArrows, 350);
+  }, [activePhase, syncArrows]);
+
+  function scrollTabs(dir: "left" | "right") {
+    tabsRef.current?.scrollBy({ left: dir === "left" ? -220 : 220, behavior: "smooth" });
+    setTimeout(syncArrows, 350);
+  }
+
   useEffect(() => {
     const load = () => {
       setChecks(loadChecks());
@@ -243,76 +269,127 @@ export function ModuleSection() {
         </p>
       </div>
 
-      {/* Phase tabs — visual with mini progress bars */}
-      <div className="flex gap-2 mb-8 overflow-x-auto scrollbar-none -mx-1 px-1 pb-1 animate-fade-in-up stagger-1">
-        {phases.map((p, i) => {
-          const items = p.cards.flatMap((c) => c.items);
-          const done = items.filter((it) => checks[it.id]).length;
-          const pct = items.length > 0 ? Math.round((done / items.length) * 100) : 0;
-          const color = PHASE_COLORS[i];
-          const isActive = activePhase === i;
-          const isComplete = pct === 100;
-          return (
-            <button
-              key={p.id}
-              onClick={() => setActivePhase(i)}
-              className="flex-shrink-0 flex flex-col gap-2 px-4 py-3 rounded-xl transition-all duration-200"
-              style={{
-                background: isActive ? `${color}12` : "transparent",
-                border: `1px solid ${isActive ? `${color}35` : "rgba(255,255,255,0.06)"}`,
-                boxShadow: isActive ? `0 0 0 1px ${color}15, 0 4px 16px rgba(0,0,0,0.3)` : "none",
-                minWidth: "130px",
-              }}
-              onMouseEnter={e => {
-                if (!isActive) {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = "rgba(255,255,255,0.1)";
-                  el.style.background = "rgba(255,255,255,0.025)";
-                }
-              }}
-              onMouseLeave={e => {
-                if (!isActive) {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = "rgba(255,255,255,0.06)";
-                  el.style.background = "transparent";
-                }
-              }}
-            >
-              {/* Phase name row */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200"
-                  style={{
-                    background: isComplete ? "#22c55e" : isActive ? color : "#2a2a38",
-                    boxShadow: isActive ? `0 0 8px ${color}` : "none",
-                  }}
-                />
-                <span className="text-xs font-bold truncate" style={{ color: isActive ? "#f0f0f8" : "#606070" }}>
-                  <span className="hidden sm:inline">{clean(p.title)}</span>
-                  <span className="sm:hidden">Fase {i + 1}</span>
-                </span>
-              </div>
-              {/* Mini progress bar */}
-              <div className="pl-4 flex items-center gap-2">
-                <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                  {pct > 0 && (
-                    <div
-                      className="h-full rounded-full transition-all duration-700"
-                      style={{
-                        width: `${pct}%`,
-                        background: isComplete ? "#22c55e" : color,
-                        boxShadow: `0 0 4px ${isComplete ? "#22c55e" : color}`,
-                      }}
-                    />
-                  )}
+      {/* ── Phase carousel ── */}
+      <div className="relative mb-8 animate-fade-in-up stagger-1">
+
+        {/* Left arrow */}
+        <button
+          onClick={() => scrollTabs("left")}
+          aria-label="Fases anteriores"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center rounded-lg transition-all duration-150"
+          style={{
+            width: "28px", height: "36px",
+            background: "color-mix(in srgb, var(--background, #060610) 92%, transparent)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            color: "#707088",
+            opacity: canLeft ? 1 : 0,
+            pointerEvents: canLeft ? "auto" : "none",
+            backdropFilter: "blur(8px)",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#c4b5fd"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(124,58,237,0.3)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#707088"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)"; }}
+        >
+          <ChevronLeft size={13} />
+        </button>
+
+        {/* Fade edges — uses CSS var so it matches both default and retro themes */}
+        {canLeft  && <div className="absolute left-7  top-0 bottom-0 w-8 z-[5] pointer-events-none" style={{ background: "linear-gradient(to right, var(--background, #060610), transparent)" }} />}
+        {canRight && <div className="absolute right-7 top-0 bottom-0 w-8 z-[5] pointer-events-none" style={{ background: "linear-gradient(to left,  var(--background, #060610), transparent)" }} />}
+
+        {/* Scrollable pills */}
+        <div
+          ref={tabsRef}
+          onScroll={syncArrows}
+          className="flex gap-2 overflow-x-auto scrollbar-none pb-1"
+          style={{ paddingLeft: canLeft ? "36px" : "0", paddingRight: canRight ? "36px" : "0", transition: "padding 200ms ease" }}
+        >
+          {phases.map((p, i) => {
+            const items = p.cards.flatMap((c) => c.items);
+            const done  = items.filter((it) => checks[it.id]).length;
+            const pct   = items.length > 0 ? Math.round((done / items.length) * 100) : 0;
+            const color = PHASE_COLORS[i];
+            const isActive   = activePhase === i;
+            const isComplete = pct === 100;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setActivePhase(i)}
+                className="flex-shrink-0 flex flex-col gap-2 px-4 py-3 rounded-xl transition-all duration-200"
+                style={{
+                  background:  isActive ? `${color}14` : "transparent",
+                  border:      `1px solid ${isActive ? `${color}40` : "rgba(255,255,255,0.06)"}`,
+                  boxShadow:   isActive ? `0 0 0 1px ${color}18, 0 4px 20px rgba(0,0,0,0.35)` : "none",
+                  minWidth:    "140px",
+                  transform:   isActive ? "translateY(-1px)" : "translateY(0)",
+                }}
+                onMouseEnter={e => {
+                  if (!isActive) {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.borderColor = "rgba(255,255,255,0.12)";
+                    el.style.background  = "rgba(255,255,255,0.03)";
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.borderColor = "rgba(255,255,255,0.06)";
+                    el.style.background  = "transparent";
+                  }
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200"
+                    style={{
+                      background: isComplete ? "#22c55e" : isActive ? color : "#2a2a38",
+                      boxShadow:  isActive ? `0 0 8px ${color}` : "none",
+                    }}
+                  />
+                  <span className="text-xs font-bold truncate" style={{ color: isActive ? "#f0f0f8" : "#606070" }}>
+                    {clean(p.title)}
+                  </span>
                 </div>
-                <span className="mono-label flex-shrink-0" style={{ color: isActive ? color : "#404050" }}>
-                  {pct}%
-                </span>
-              </div>
-            </button>
-          );
-        })}
+                <div className="pl-4 flex items-center gap-2">
+                  <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                    {pct > 0 && (
+                      <div
+                        className="h-full rounded-full transition-all duration-700"
+                        style={{
+                          width: `${pct}%`,
+                          background: isComplete ? "#22c55e" : color,
+                          boxShadow:  `0 0 4px ${isComplete ? "#22c55e" : color}`,
+                        }}
+                      />
+                    )}
+                  </div>
+                  <span className="mono-label flex-shrink-0" style={{ color: isActive ? color : "#404050" }}>
+                    {pct}%
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right arrow */}
+        <button
+          onClick={() => scrollTabs("right")}
+          aria-label="Próximas fases"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center rounded-lg transition-all duration-150"
+          style={{
+            width: "28px", height: "36px",
+            background: "color-mix(in srgb, var(--background, #060610) 92%, transparent)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            color: "#707088",
+            opacity: canRight ? 1 : 0,
+            pointerEvents: canRight ? "auto" : "none",
+            backdropFilter: "blur(8px)",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#c4b5fd"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(124,58,237,0.3)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#707088"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)"; }}
+        >
+          <ChevronRight size={13} />
+        </button>
       </div>
 
       {/* Phase header */}

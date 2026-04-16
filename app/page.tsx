@@ -37,7 +37,10 @@ import { Certificate } from "@/components/Certificate";
 import { KeyboardShortcuts, useKeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { useI18n } from "@/components/I18nProvider";
 import { RightPanel } from "@/components/RightPanel";
+import { RetroOverlay } from "@/components/RetroOverlay";
+import { VistaOverlay } from "@/components/VistaOverlay";
 import { useLayout } from "@/components/LayoutContext";
+import { useSiteTheme } from "@/components/SiteThemeContext";
 import { Flame, Target } from "lucide-react";
 
 /* ── Section divider — gradient fade style ─── */
@@ -83,6 +86,7 @@ function HeroStatus() {
 export default function Home() {
   const { t } = useI18n();
   const { leftOpen, rightOpen } = useLayout();
+  const { theme } = useSiteTheme();
 
   const [showFlashcards,   setShowFlashcards]   = useState(false);
   const [showExport,       setShowExport]       = useState(false);
@@ -123,13 +127,13 @@ export default function Home() {
   }, []);
 
   const mainStyle = isDesktop ? {
-    marginLeft:  leftOpen  ? "208px" : "56px",
+    marginLeft:  leftOpen  ? "256px" : "0px",
     marginRight: rightOpen ? "256px" : "0px",
     transition:  "margin 280ms cubic-bezier(0.4,0,0.2,1)",
   } : {};
 
   return (
-    <div className="flex min-h-screen" style={{ background: "#060610" }}>
+    <div className="flex min-h-screen" style={{ background: theme.bg, transition: "background 400ms ease" }}>
       <Sidebar />
       <MobileNav />
       <BottomNav />
@@ -149,6 +153,8 @@ export default function Home() {
         onShortcuts   ={() => setShowShortcuts(true)}
       />
 
+      <RetroOverlay />
+      <VistaOverlay />
       <TabTitle />
       <OnboardingModal />
       <PhaseCompleteModal />
@@ -167,7 +173,7 @@ export default function Home() {
       <main id="main-content" className="flex-1 w-full pb-16 lg:pb-0" style={mainStyle}>
 
         {/* ═══ HERO ═══════════════════════════════════════ */}
-        <section id="overview" className="relative overflow-hidden" style={{ background: "#060610" }}>
+        <section id="overview" className="relative overflow-hidden" style={{ background: theme.bg }}>
           <div className="accent-bar" />
           <div className="grid-lines absolute inset-0 pointer-events-none" />
           <div className="absolute inset-0 pointer-events-none" style={{
@@ -182,7 +188,7 @@ export default function Home() {
 
             {/* Terminal breadcrumb */}
             <div className="flex items-center gap-3 mb-10">
-              <span className="mono-label" style={{ color: "#f59e0b" }}>$ dev-roadmap --year 2025</span>
+              <span className="mono-label" style={{ color: "#f59e0b" }}>$ dev-roadmap --year 2026</span>
               <div className="flex-1 divider-line" />
               <span className="flex items-center gap-1.5 mono-label" style={{ color: "#22c55e" }}>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] glow-dot" />
@@ -192,16 +198,44 @@ export default function Home() {
 
             {/* Headline */}
             <div className="mb-8">
-              <p className="font-normal mb-1" style={{ fontSize: "clamp(0.95rem, 2vw, 1.2rem)", color: "#404058" }}>
-                Do zero ao
+              <p
+                className="mono-label mb-4"
+                style={{ color: theme.textDim, letterSpacing: "0.2em" }}
+              >
+                trilha de aprendizado · 2026
               </p>
-              <h1 className="font-black leading-[0.9] tracking-tight text-gradient-purple"
-                style={{ fontSize: "clamp(3.8rem, 10vw, 7rem)" }}>
-                dev júnior
+              <h1 className="font-black tracking-tight" style={{ lineHeight: 1 }}>
+                <span
+                  className="block"
+                  style={{
+                    fontSize: "clamp(1rem, 2vw, 1.3rem)",
+                    fontWeight: 300,
+                    color: theme.textDim,
+                    letterSpacing: "0.04em",
+                    marginBottom: "0.15em",
+                  }}
+                >
+                  do zero ao
+                </span>
+                <span
+                  className="block"
+                  style={{
+                    fontSize: "clamp(3.2rem, 7vw, 5rem)",
+                    backgroundImage: `linear-gradient(130deg, ${theme.accent} 0%, ${theme.accentLight} 50%, ${theme.accentHover} 100%)`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    lineHeight: 1,
+                    paddingBottom: "0.18em",
+                    marginBottom: "-0.18em",
+                  }}
+                >
+                  dev júnior
+                </span>
               </h1>
-              <p className="font-medium mt-3" style={{ fontSize: "clamp(1rem, 2.2vw, 1.35rem)", color: "#505065" }}>
-                em 9 meses — do básico ao deploy.{" "}
-                <span style={{ color: "#f59e0b" }}>⚡</span>
+              <p className="mt-5" style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)", color: theme.textMuted, fontWeight: 400 }}>
+                em 9 meses — do básico ao deploy{" "}
+                <span style={{ color: theme.warning }}>⚡</span>
               </p>
             </div>
 

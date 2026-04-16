@@ -61,7 +61,7 @@ function drawCertificate(canvas: HTMLCanvasElement, name: string, progress: Retu
   ctx.fillStyle = "#9090b0";
   ctx.font = "bold 11px monospace";
   ctx.textAlign = "center";
-  ctx.fillText("CERTIFICADO DE CONCLUSÃO · DEV ROADMAP 2025", W / 2, 72);
+  ctx.fillText("CERTIFICADO DE CONCLUSÃO · DEV ROADMAP 2026", W / 2, 72);
 
   // Trophy / seal
   ctx.font = "72px serif";
@@ -93,7 +93,7 @@ function drawCertificate(canvas: HTMLCanvasElement, name: string, progress: Retu
   // Description
   ctx.fillStyle = "#909098";
   ctx.font = "16px sans-serif";
-  ctx.fillText("completou o Dev Roadmap Python & TypeScript 2025", W / 2, 385);
+  ctx.fillText("completou o Dev Roadmap Python & TypeScript 2026", W / 2, 385);
   ctx.fillText("cobrindo Python, TypeScript, FastAPI, React, Docker e PostgreSQL", W / 2, 408);
 
   // Stats row

@@ -95,7 +95,7 @@ export function ShareProfile({ onClose }: { onClose: () => void }) {
         {/* Preview card */}
         <div className="rounded-xl border border-[#7c6af730] p-4 mb-5 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #1a1530, #13131a)" }}>
           <div className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-10" style={{ background: "#7c6af7", transform: "translate(30%, -30%)" }} />
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#7c6af7] mb-2">Dev Roadmap 2025</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#7c6af7] mb-2">Dev Roadmap 2026</p>
           <div className="flex items-end gap-3 mb-3">
             <span className="text-3xl font-bold text-[#ededf4]">{stats.pct}%</span>
             <span className="text-xs text-[#606070] mb-1">{stats.done}/{TOTAL} itens completos</span>

@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 :root {
+  /* Sidebar widths — updated live by LayoutContext via JS */
+  --lsw: 256px;
+  --rsw: 256px;
+
   --background: #080812;
   --foreground: #f0f0f8;
   --c-sidebar:  #0c0c18;
@@ -134,6 +138,35 @@ body {
 
 /* Light: card hover border */
 [data-theme="light"] .card-hover:hover { border-color: #c0c0d8 !important; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+
+/* ── Light mode — inverts everything on <html> ── */
+html.light-mode {
+  filter: invert(1) hue-rotate(180deg);
+  transition: filter 300ms ease;
+}
+/* Disable any per-theme content filters when light-mode is active
+   (retro/vista filters on #main-content would double-compose and look errado) */
+html.light-mode #main-content {
+  filter: none !important;
+  background-color: transparent !important;
+}
+
+/* ── Sticky progress bar — CSS-var driven positioning, no JS isDesktop needed ── */
+.sticky-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+}
+@media (min-width: 1024px) {
+  .sticky-progress-bar {
+    left: var(--lsw, 0px);
+    right: var(--rsw, 0px);
+    transition: left 280ms cubic-bezier(0.4,0,0.2,1),
+                right 280ms cubic-bezier(0.4,0,0.2,1);
+  }
+}
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
@@ -344,7 +377,7 @@ textarea:focus-visible {
 
 /* Gradient text utilities */
 .text-gradient-purple {
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 45%, #c084fc 75%, #ddd6fe 100%);
+  background: linear-gradient(130deg, #7c3aed 0%, #9333ea 40%, #c084fc 75%, #e9d5ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -426,6 +459,255 @@ textarea:focus-visible {
 }
 .cta-glow:active {
   transform: translateY(0);
+}
+
+/* ══════════════════════════════════════════
+   THEME SYSTEM — all non-default palettes
+   ══════════════════════════════════════════ */
+
+#main-content {
+  transition: filter 500ms ease, background-color 500ms ease;
+}
+
+/* ── RETRO DARK ────────────────────────── */
+[data-site-theme="retro-dark"] {
+  --background:  #221608;
+  --foreground:  #f5e8d0;
+  --c-sidebar:   #2e1e10;
+  --c-card:      #321e0e;
+  --c-surface:   #2a1c0e;
+  --c-inner:     #261808;
+  --c-border:    rgba(240,220,180,0.10);
+  --c-border-s:  rgba(240,220,180,0.05);
+  --c-text-1:    #f5e8d0;
+  --c-text-2:    #d4b888;
+  --c-text-3:    #a07848;
+  --c-text-4:    #6a4e30;
+  --accent:      #7dd4c8;
+  --accent-2:    #e8c060;
+}
+[data-site-theme="retro-dark"] body { background: #221608 !important; }
+[data-site-theme="retro-dark"] #main-content {
+  background-color: #221608;
+  filter: sepia(0.5) saturate(0.65) brightness(1.12) hue-rotate(-6deg);
+}
+[data-site-theme="retro-dark"] .accent-bar {
+  background: linear-gradient(90deg, #5bbfb5 0%, #e87878 35%, #5bbfb5 65%, #e87878 100%) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 6s linear infinite !important;
+}
+
+/* ── RETRO LIGHT ───────────────────────── */
+[data-site-theme="retro-light"] {
+  --background:  #f5e8d0;
+  --foreground:  #2e1808;
+  --c-sidebar:   #ede0c4;
+  --c-card:      #fff8ee;
+  --c-surface:   #f7eedd;
+  --c-inner:     #ede4ce;
+  --c-border:    rgba(100,60,20,0.10);
+  --c-border-s:  rgba(100,60,20,0.06);
+  --c-text-1:    #2e1808;
+  --c-text-2:    #5a3018;
+  --c-text-3:    #7a5030;
+  --c-text-4:    #9a7050;
+  --accent:      #5bbfb5;
+  --accent-2:    #c05820;
+}
+[data-site-theme="retro-light"] body { background: #f5e8d0 !important; }
+/*
+  Light mode: invert(1) hue-rotate(180deg) flips dark→light while
+  keeping purple/teal accents recognisable. The RetroOverlay adds
+  a very faint warm tint + ghost scanlines on top.
+*/
+[data-site-theme="retro-light"] #main-content {
+  background-color: #f5e8d0;
+  filter: invert(1) hue-rotate(180deg) sepia(0.12) brightness(0.97);
+}
+[data-site-theme="retro-light"] .accent-bar {
+  background: linear-gradient(90deg, #3aafa4 0%, #c05820 35%, #3aafa4 65%, #c05820 100%) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 6s linear infinite !important;
+}
+
+/* ── VISTA DARK ────────────────────────── */
+[data-site-theme="vista-dark"] {
+  --background:  #06091a;
+  --foreground:  #ccddf5;
+  --c-sidebar:   #0a0e22;
+  --c-card:      #0d1430;
+  --c-surface:   #0f1535;
+  --c-inner:     #080c1c;
+  --c-border:    rgba(74,158,255,0.08);
+  --c-border-s:  rgba(74,158,255,0.04);
+  --c-text-1:    #ccddf5;
+  --c-text-2:    #8899cc;
+  --c-text-3:    #5566aa;
+  --c-text-4:    #334477;
+  --accent:      #4a9eff;
+  --accent-2:    #fbbf24;
+}
+[data-site-theme="vista-dark"] body { background: #06091a !important; }
+[data-site-theme="vista-dark"] #main-content {
+  background-color: #06091a;
+  /* Shift from purple-dark to blue-dark: hue-rotate without invert */
+  filter: hue-rotate(195deg) saturate(0.85) brightness(1.0);
+}
+[data-site-theme="vista-dark"] .accent-bar {
+  background: linear-gradient(90deg, #2563eb 0%, #4a9eff 35%, #38bdf8 65%, #4a9eff 100%) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 6s linear infinite !important;
+}
+
+/* ── VISTA LIGHT ───────────────────────── */
+[data-site-theme="vista-light"] {
+  --background:  #dae6f4;
+  --foreground:  #08172a;
+  --c-sidebar:   #ccddf0;
+  --c-card:      #eaf3fc;
+  --c-surface:   #e0eef8;
+  --c-inner:     #d4e8f5;
+  --c-border:    rgba(0,60,140,0.10);
+  --c-border-s:  rgba(0,60,140,0.05);
+  --c-text-1:    #08172a;
+  --c-text-2:    #1a3050;
+  --c-text-3:    #3a5070;
+  --c-text-4:    #6080a0;
+  --accent:      #0066cc;
+  --accent-2:    #d97706;
+}
+[data-site-theme="vista-light"] body { background: #dae6f4 !important; }
+[data-site-theme="vista-light"] #main-content {
+  background-color: #dae6f4;
+  /* invert dark→light, then extra +15° to push accent toward blue */
+  filter: invert(1) hue-rotate(195deg) saturate(0.88) brightness(1.03);
+}
+[data-site-theme="vista-light"] .accent-bar {
+  background: linear-gradient(90deg, #0044aa 0%, #0066cc 35%, #38bdf8 65%, #0066cc 100%) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 6s linear infinite !important;
+}
+
+/* ── DEFAULT LIGHT ─────────────────────── */
+[data-site-theme="default-light"] {
+  --background:  #f0f0fa;
+  --foreground:  #1a1a2e;
+  --c-sidebar:   #e6e6f4;
+  --c-card:      #ffffff;
+  --c-surface:   #f5f5fd;
+  --c-inner:     #ebebf7;
+  --c-border:    rgba(0,0,0,0.07);
+  --c-border-s:  rgba(0,0,0,0.04);
+  --c-text-1:    #1a1a2e;
+  --c-text-2:    #3a3a60;
+  --c-text-3:    #5a5a80;
+  --c-text-4:    #8888aa;
+  --accent:      #6d28d9;
+  --accent-2:    #d97706;
+}
+[data-site-theme="default-light"] body { background: #f0f0fa !important; }
+[data-site-theme="default-light"] #main-content {
+  background-color: #f0f0fa;
+  filter: invert(1) hue-rotate(180deg) brightness(1.04);
+}
+[data-site-theme="default-light"] .accent-bar {
+  background: linear-gradient(90deg, #5b21b6 0%, #6d28d9 35%, #7c3aed 65%, #6d28d9 100%) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 6s linear infinite !important;
+}
+
+/* Legacy key — forward old "retro" stored value to retro-dark behaviour */
+[data-site-theme="retro"] {
+  --background:  #221608; --foreground: #f5e8d0;
+  --accent: #7dd4c8; --accent-2: #e8c060;
+}
+[data-site-theme="retro"] body { background: #221608 !important; }
+[data-site-theme="retro"] #main-content {
+  filter: sepia(0.5) saturate(0.65) brightness(1.12) hue-rotate(-6deg);
+}
+
+/* Glass */
+[data-site-theme="retro"] .glass {
+  background: rgba(240,232,216,0.025);
+  border-color: rgba(240,232,216,0.07);
+}
+
+/* Stat card */
+[data-site-theme="retro"] .stat-card {
+  background: linear-gradient(160deg, rgba(240,232,216,0.04) 0%, rgba(240,232,216,0.01) 100%);
+  border-color: rgba(240,232,216,0.08);
+}
+[data-site-theme="retro"] .stat-card:hover {
+  border-color: rgba(125,212,200,0.22);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+}
+
+/* Eyebrow */
+[data-site-theme="retro"] .section-eyebrow {
+  color: #7dd4c8;
+}
+
+/* Gradient text */
+[data-site-theme="retro"] .text-gradient-purple {
+  background: linear-gradient(135deg, #5bbfb5 0%, #7dd4c8 40%, #9ee8e0 70%, #e8c8a0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+[data-site-theme="retro"] .text-gradient-amber {
+  background: linear-gradient(135deg, #e87878, #e8c060, #c8f080);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Divider */
+[data-site-theme="retro"] .divider-line {
+  background: linear-gradient(90deg, rgba(125,212,200,0.2) 0%, rgba(240,232,216,0.04) 40%, transparent 100%);
+}
+
+/* CTA glow */
+[data-site-theme="retro"] .cta-glow {
+  box-shadow: 0 0 0 1px rgba(125,212,200,0.35), 0 0 24px rgba(125,212,200,0.15), 0 4px 12px rgba(0,0,0,0.4);
+}
+[data-site-theme="retro"] .cta-glow:hover {
+  box-shadow: 0 0 0 1px rgba(125,212,200,0.55), 0 0 36px rgba(125,212,200,0.25), 0 6px 20px rgba(0,0,0,0.5);
+}
+[data-site-theme="retro"] .btn-glow {
+  box-shadow: 0 0 20px rgba(125,212,200,0.3), 0 0 40px rgba(125,212,200,0.08);
+}
+[data-site-theme="retro"] .btn-glow:hover {
+  box-shadow: 0 0 28px rgba(125,212,200,0.45), 0 0 56px rgba(125,212,200,0.12);
+}
+
+/* Phase accent card hover */
+[data-site-theme="retro"] .phase-accent-card:hover {
+  border-top-color: rgba(240,232,216,0.12);
+  border-right-color: rgba(240,232,216,0.12);
+  border-bottom-color: rgba(240,232,216,0.12);
+}
+
+/* Grid lines warm tint */
+[data-site-theme="retro"] .grid-lines {
+  background-image:
+    linear-gradient(rgba(240,220,190,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240,220,190,0.018) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Scrollbar */
+[data-site-theme="retro"] ::-webkit-scrollbar-track { background: #140e08; }
+[data-site-theme="retro"] ::-webkit-scrollbar-thumb { background: #3a2818; border-radius: 3px; }
+[data-site-theme="retro"] ::-webkit-scrollbar-thumb:hover { background: #5a4030; }
+
+/* Focus */
+[data-site-theme="retro"] :focus-visible { outline-color: #7dd4c8; }
+[data-site-theme="retro"] button:focus-visible,
+[data-site-theme="retro"] a:focus-visible { outline-color: #7dd4c8; }
+
+/* Glow dot */
+[data-site-theme="retro"] .glow-dot {
+  filter: drop-shadow(0 0 3px #5ad464);
 }
 
 /* ── prefers-reduced-motion ── */

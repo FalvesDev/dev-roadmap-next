@@ -93,7 +93,7 @@ function drawCard(canvas: HTMLCanvasElement, data: ExportData) {
 
   ctx.fillStyle = "#909098";
   ctx.font = "10px -apple-system, system-ui, sans-serif";
-  ctx.fillText("Python · TypeScript · 2025", 62, 52);
+  ctx.fillText("Python · TypeScript · 2026", 62, 52);
 
   // Phase badge
   ctx.fillStyle = `${data.phaseColor}20`;
