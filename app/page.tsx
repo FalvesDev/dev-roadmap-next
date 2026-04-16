@@ -234,38 +234,33 @@ export default function Home() {
             </div>
 
             {/* ── CTA + status ── */}
-            <div className="flex flex-wrap items-center gap-4 mb-12">
+            <div className="flex flex-wrap items-center gap-4 mb-10">
               <HeroCTA />
               <HeroStatus />
             </div>
 
-            {/* ── Widget cards ── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <div data-tour="daily-challenge"><DailyChallenge /></div>
-              <div data-tour="next-step"><NextStepWidget /></div>
+            {/* ── Next step widget (compact, single row) ── */}
+            <div className="mb-8" data-tour="next-step">
+              <NextStepWidget />
             </div>
 
-            {/* ── Tools ── */}
+            {/* ── Tools — primary group only ── */}
             <div data-tour="quick-actions">
               <div className="flex items-center gap-3 mb-3">
                 <span className="mono-label" style={{ color: "#7c3aed" }}>&gt;_</span>
                 <span className="mono-label" style={{ color: "#404060" }}>ferramentas</span>
                 <div className="flex-1 divider-line" />
               </div>
-              <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1 -mx-1 px-1">
+              <div className="flex flex-wrap gap-2">
                 <ToolBtn label="Flashcards"   icon={Brain}          onClick={() => setShowFlashcards(true)} />
                 <ToolBtn label="Pomodoro"     icon={Timer}          onClick={() => setShowPomodoro(true)} />
                 <ToolBtn label="Quiz"         icon={HelpCircle}     onClick={() => setShowQuiz(true)} />
                 <ToolBtn label="Notas"        icon={PenLine}        onClick={() => setShowNotes(true)} />
                 <ToolBtn label="Histórico"    icon={CalendarDays}   onClick={() => setShowActivity(true)} />
-                <ToolBtn label="Compartilhar" icon={Share2}         onClick={() => setShowShare(true)} />
                 <ToolBtn label="Exportar"     icon={GraduationCap}  onClick={() => setShowExport(true)} />
                 <ToolBtn label="Certificado"  icon={Award}          onClick={() => setShowCertificate(true)} />
-                <ToolBtn label="Backup"       icon={DatabaseBackup} onClick={() => setShowBackup(true)} />
                 <AchievementsBadge onClick={() => setShowAchievements(true)} />
                 <ToolBtn label="Atalhos"      icon={Keyboard}       onClick={() => setShowShortcuts(true)} />
-                <StudyReminder />
-                <OnboardingTour />
                 <LocaleToggle />
               </div>
             </div>
@@ -286,14 +281,12 @@ export default function Home() {
 
           <div id="progresso">
             <Divider label={t("divProgress")} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div data-tour="streak"><StreakTracker /></div>
-              <div className="flex flex-col gap-4">
-                <div data-tour="weekly-goal"><WeeklyGoal /></div>
-                <PathSelector />
-              </div>
-            </div>
             <ProgressStats />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div data-tour="streak"><StreakTracker /></div>
+              <div data-tour="weekly-goal"><WeeklyGoal /></div>
+              <PathSelector />
+            </div>
             <ProgressCharts />
           </div>
 

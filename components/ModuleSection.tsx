@@ -391,7 +391,7 @@ export function ModuleSection() {
               cardPct={cardPct}
               isComplete={isComplete}
               inProgress={inProgress}
-              defaultOpen={ci === 0 && activePhase === 0}
+              defaultOpen={false}
               moduleArticles={moduleArticles}
               animDelay={ci * 0.06}
             />
